@@ -1,0 +1,77 @@
+@reference "@/assets/css/global.css";
+
+.header-gradient {
+  background: linear-gradient(180deg, #160f38 0%, rgba(22, 15, 56, 0) 100%);
+  width: 100%;
+  height: 100%;
+}
+
+/* Fade para o conteúdo do menu */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+/* Fade para o menu/fechar */
+.fade-menu-enter-active,
+.fade-menu-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-menu-enter-from,
+.fade-menu-leave-to {
+  opacity: 0;
+}
+.fade-menu-enter-to,
+.fade-menu-leave-from {
+  opacity: 1;
+}
+
+/* Fade para o background */
+.background-enter-active {
+  transition: opacity 1s;
+}
+.background-leave-active {
+  transition: opacity 3s;
+}
+.background-enter-from,
+.background-leave-to {
+  opacity: 0;
+}
+.background-enter-to,
+.background-leave-from {
+  opacity: 1;
+}
+
+.header-fade-enter-active,
+.header-fade-leave-active {
+  transition: opacity 0.3s;
+}
+.header-fade-enter-from,
+.header-fade-leave-to {
+  opacity: 0;
+}
+.header-fade-enter-to,
+.header-fade-leave-from {
+  opacity: 1;
+}
+
+.fade-menu-btn-enter-active,
+.fade-menu-btn-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-menu-btn-enter-from,
+.fade-menu-btn-leave-to {
+  opacity: 0;
+}
+.fade-menu-btn-enter-to,
+.fade-menu-btn-leave-from {
+  opacity: 1;
+}

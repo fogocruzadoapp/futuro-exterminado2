@@ -1,0 +1,31 @@
+/* assets/css/fonts.css */
+
+@layer base {
+  @font-face {
+    font-family: 'HostGrotesk';
+    src: url('/fonts/HostGrotesk-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Big Shoulders Text - Black */
+  @font-face {
+    font-family: 'BigShoulders';
+    src: url('/fonts/bigshoulders.woff2') format('woff2'),
+      url('/fonts/bigshoulders.woff') format('woff');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* Big Shoulders Text - Regular */
+  @font-face {
+    font-family: 'BigShouldersRegular';
+    src: url('/fonts/bigshouldersregular.woff2') format('woff2'),
+      url('/fonts/bigshouldersregular.woff') format('woff');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+}

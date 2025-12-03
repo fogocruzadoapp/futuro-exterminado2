@@ -1,0 +1,18 @@
+[
+  {
+    "texto": "Parágrafo curto com alguma análise específica da região do Rio de Janeiro lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod illum dolore eu feugiat nulla facilisis at",
+    "nome": "Rio de Janeiro"
+  },
+  {
+    "texto": "Parágrafo curto com alguma análise específica da região do Pernambuco lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod illum dolore eu feugiat nulla facilisis at",
+    "nome": "Pernambuco"
+  },
+  {
+    "texto": "Parágrafo curto com alguma análise específica da região do Bahia lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod illum dolore eu feugiat nulla facilisis at",
+    "nome": "Bahia"
+  },
+  {
+    "texto": "Parágrafo curto com alguma análise específica da região do Para lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod illum dolore eu feugiat nulla facilisis at",
+    "nome": "Para"
+  }
+]

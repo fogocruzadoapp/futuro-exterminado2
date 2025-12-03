@@ -1,0 +1,19 @@
+---
+name: config
+about: Template configuration
+title_placeholder: ''
+labels: ''
+blank: true
+---
+
+## 📝 Configuração de Issue
+
+Use este template para issues que não se encaixam nos outros templates.
+
+**Tipo:** (bug / feature / docs / question / other)
+
+**Descrição:**
+
+---
+
+Para mais informações, consulte nossa [Documentação](https://github.com/fogocruzadoapp/futuro-exterminado#-documentação)

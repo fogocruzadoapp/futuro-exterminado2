@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-host: 'HostGrotesk', sans-serif;
+  --font-bigShoulders: 'BigShoulders', sans-serif;
+  --font-bigShouldersRegular: 'BigShouldersRegular', sans-serif;
+
+  --color-blue-100: #e3e1f5;
+  --color-blue-200: #cbc8e8;
+  --color-blue-300: #aca6e0;
+  --color-blue-400: #8c82e0;
+  --color-blue-500: #6a5ed6;
+  --color-blue-600: #4235bc;
+  --color-blue-700: #3a2d9e;
+  --color-blue-800: #2f227d;
+  --color-blue-900: #24195d;
+  --color-blue-1000: #160f38;
+
+  --color-base-100: #f6f2f7;
+  --color-base-200: #e9e1eb;
+  --color-base-300: #d9d0db;
+  --color-base-400: #bcb0bf;
+  --color-base-500: #978a9c;
+  --color-base-600: #76697a;
+  --color-base-700: #5c5061;
+  --color-base-800: #453b4a;
+  --color-base-900: #2a232e;
+  --color-base-1000: #1d0c07;
+
+  --color-yellow-100: #ffc876;
+  --color-yellow-200: #ffbd5c;
+  --color-yellow-300: #ffad33;
+  --color-yellow-400: #e89d2e;
+  --color-yellow-500: #b57b24;
+
+  --color-violet: #a64dff; /* vitimas feridas*/
+  --color-coral: #ec6775; /* vitimas assassinadas*/
+
+  --color-indigo: #574efc;
+
+  --color-base-100: #f6f2f7;
+  --color-base-200: #e9e1eb;
+  --color-base-300: #d9d0db;
+  --color-base-400: #bcb0bf;
+  --color-base-500: #978a9c;
+  --color-base-600: #76697a;
+  --color-base-700: #5c5061;
+  --color-base-800: #453b4a;
+  --color-base-900: #2a232e;
+  --color-base-1000: #1d0c07;
+}
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply font-host text-base-900  bg-blue-1000 leading-[1.4] antialiased;
+  }
+  h2 {
+    @apply mb-2 text-2xl;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+  }
+
+  p {
+  }
+}
+@layer mapbox {
+  .mapboxgl-ctrl-logo{
+    display: none !important;
+  }
+  .mapboxgl-ctrl-fullscreen {
+    display: none !important;
+  }
+  .meu-popup-personalizado .mapboxgl-popup-content {
+    background: none !important;
+    padding: 0 !important;
+  }
+  .mapboxgl-popup-content {
+    background-color: transparent !important;
+  }
+  .mapboxgl-popup-tip {
+    border-top-color: transparent !important;
+  }
+  .mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+    border-bottom-color: transparent !important;
+  }
+  .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+    border-top-color: transparent !important;
+  }
+  .mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+    border-right-color: transparent !important;
+  }
+  .mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+    border-left-color: transparent !important;
+  }
+}
+@layer utilities {
+  /* Esconde scrollbar no Chrome, Safari e Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Esconde scrollbar no Edge e IE 10+ */
+  .hide-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+  }
+}
+@layer components {
+  .font-bigShoulders {
+    @apply font-bigShoulders font-extrabold uppercase tracking-[0.025rem];
+  }
+}

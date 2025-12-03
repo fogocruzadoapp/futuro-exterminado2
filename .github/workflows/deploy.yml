@@ -1,0 +1,62 @@
+# Nome do workflow que aparecerá no GitHub Actions
+name: Deploy Nuxt Project via SSH
+
+# Dispara o deploy automaticamente quando houver push na branch "test"
+on:
+  push:
+    branches:
+      - test
+
+jobs:
+  deploy:
+    # Define o sistema operacional usado no runner do GitHub
+    runs-on: ubuntu-latest
+
+    steps:
+      # Etapa 1: Clona o repositório no runner
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Etapa 2: Instala a versão do Node.js necessária para o projeto
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Etapa 3: Instala as dependências do projeto definidas no package.json
+      - name: Install dependencies
+        run: npm install
+
+      # Etapa 4: Gera o site estático Nuxt com baseURL customizado para subpasta
+      - name: Generate build
+        run: npm run generate
+        env:
+          # Define o caminho base onde o site será hospedado
+          NUXT_APP_BASE_URL: /projetos/fogo-cruzado/futuro-exterminado/
+
+      # Etapa 5: Configura a chave SSH para autenticação no servidor remoto
+      - name: Set up SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_ed25519
+
+      # Etapa 6: Testa a conexão com o servidor via SSH e porta customizada
+      - name: Test SSH connection
+        run: |
+          echo "Testando conexão SSH..."
+          ssh -p 22022 -o StrictHostKeyChecking=no wwtapr@162.241.103.165 "echo Conexão SSH estabelecida"
+
+      # Etapa 7: Garante que o diretório remoto de destino existe antes do deploy
+      - name: Criar diretório remoto
+        run: |
+          ssh -p 22022 -o StrictHostKeyChecking=no wwtapr@162.241.103.165 "mkdir -p public_html/projetos/fogo-cruzado/futuro-exterminado"
+
+      # Etapa 8: Envia os arquivos gerados da pasta ./build para o servidor via rsync
+      - name: Deploy via rsync
+        run: |
+          rsync -avz -e "ssh -p 22022 -o StrictHostKeyChecking=no" --delete ./build/ wwtapr@162.241.103.165:public_html/projetos/fogo-cruzado/futuro-exterminado/

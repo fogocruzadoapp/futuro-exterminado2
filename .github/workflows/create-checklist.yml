@@ -1,0 +1,74 @@
+name: Criar checklist inicial
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Criar issue se não existir
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const repoOwner = context.repo.owner;
+            const repoName = context.repo.repo;
+            const issueTitle = '[Checklist] ' + repoName;
+
+            const openIssues = await github.rest.issues.listForRepo({
+              owner: repoOwner,
+              repo: repoName,
+              state: 'open',
+              per_page: 100
+            });
+
+            const alreadyExists = openIssues.data.some(issue => issue.title === issueTitle);
+            if (alreadyExists) {
+              console.log("Checklist já existe.");
+              return;
+            }
+
+            const bodyLines = [
+              '### 📦 Checklist de Entrega',
+              '',
+              'Antes de publicar o site, complete todos os itens abaixo.',
+              '',
+              '#### 📄 Conteúdo e SEO',
+              '- [ ] `<title>` configurado corretamente em todas as páginas',
+              '- [ ] Meta description preenchida',
+              '- [ ] Open Graph e Twitter Cards configurados',
+              '- [ ] Imagem de compartilhamento definida e testada',
+              '- [ ] Favicon e ícones configurados',
+              '- [ ] `sitemap.xml` presente e atualizado',
+              '',
+              '#### ⚙️ Funcionalidade',
+              '- [ ] Links internos e externos testados',
+              '- [ ] Formulários validados e com envio funcional',
+              '- [ ] Scripts de analytics inseridos corretamente',
+              '- [ ] Responsividade testada',
+              '',
+              '#### 🚀 Performance e Segurança',
+              '- [ ] Imagens otimizadas',
+              '- [ ] CSS e JS minificados',
+              '- [ ] Sem erros no console do navegador',
+              '',
+              '#### 📦 Deploy e Backup',
+              '- [ ] Build final gerada e revisada',
+              '- [ ] Deploy testado',
+              '- [ ] Versão final aprovada pelo cliente',
+              '',
+              '#### ✍️ Observações Finais',
+              '_Aguardando preenchimento manual._'
+            ];
+
+            const issueBody = bodyLines.join('\n');
+
+            await github.rest.issues.create({
+              owner: repoOwner,
+              repo: repoName,
+              title: issueTitle,
+              labels: ['checklist', 'entrega'],
+              body: issueBody
+            });
