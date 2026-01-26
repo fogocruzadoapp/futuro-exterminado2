@@ -6,11 +6,12 @@
       >
       <button
         v-if="mostrarBotaoLimpar"
-        class="flex items-center gap-1 px-2 py-1 text-xs text-base-600 hover:text-red-400 hover:bg-red-50 cursor-pointer rounded-md transition-colors duration-200"
+        type="button"
+        class="flex items-center gap-1 px-2 py-1 text-xs text-base-600 hover:text-red-400 hover:bg-red-50 cursor-pointer rounded-md transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-yellow-300 focus-visible:outline-offset-2"
         @click="limparFiltros"
-        title="Limpar todos os filtros"
+        aria-label="Limpar todos os filtros"
       >
-        <SvgoClose class="w-3 h-3" :fontControlled="false" />
+        <SvgoClose class="w-3 h-3" :fontControlled="false" aria-hidden="true" />
         <span>Limpar Todos</span>
       </button>
     </div>
@@ -22,17 +23,20 @@
         class="filter-group"
       >
         <UiSelect
-          v-model="model[filtro.key]" 
+          :id="`select-${filtro.key}`"
+          v-model="model[filtro.key]"
           :options="filtro.options"
           :defaultOptionLabel="filtro.defaultOptionLabel"
           :placeholder="filtro.placeholder"
+          :label="filtro.placeholder"
         >
           <template #label>
             <div
               class="text-blue-900 bg-yellow-300 p-2 flex gap-1 items-center hover:bg-yellow-300/80"
+              aria-hidden="true"
             >
               {{ filtro.placeholder }}
-              <SvgoDropdown />
+              <SvgoDropdown aria-hidden="true" />
             </div>
           </template>
         </UiSelect>
@@ -80,10 +84,7 @@ const filtrosConfig = [
   {
     key: 'faixaEtaria',
     placeholder: 'Faixa etária',
-    options: [
-      'Criança (0-12)',
-      'Adolescente (13-17)'
-    ],
+    options: ['Criança (0-12)', 'Adolescente (13-17)'],
     defaultOptionLabel: 'Todas',
   },
   {
@@ -108,45 +109,47 @@ const filtrosConfig = [
 ];
 
 // Computeds
-  // filtros aplicados
-    const filtrosAplicados = computed(() => {
-      return filtrosConfig.some((filtro) => model.value[filtro.key] !== '');
-    });
+// filtros aplicados
+const filtrosAplicados = computed(() => {
+  return filtrosConfig.some((filtro) => model.value[filtro.key] !== '');
+});
 
-  // verificar se há mais de 2 filtros aplicados
-    const mostrarBotaoLimpar = computed(() => {
-      const filtrosSelecionados = filtrosConfig.filter(
-        (filtro) => model.value[filtro.key] !== '',
-      );
-      return filtrosSelecionados.length > 1;
-    });
+// verificar se há mais de 2 filtros aplicados
+const mostrarBotaoLimpar = computed(() => {
+  const filtrosSelecionados = filtrosConfig.filter(
+    (filtro) => model.value[filtro.key] !== '',
+  );
+  return filtrosSelecionados.length > 1;
+});
 
 // Métodos
-  const removerFiltro = (filtro) => {
-    model.value[filtro] = '';
-    emit('filtrar', { ...model.value });
-  };
+const removerFiltro = (filtro) => {
+  model.value[filtro] = '';
+  emit('filtrar', { ...model.value });
+};
 
-  const limparFiltros = () => {
-    filtrosConfig.forEach(f => { model.value[f.key] = '' })
-    emit('limpar')
-    emit('filtrar', { ...model.value })
-  };
+const limparFiltros = () => {
+  filtrosConfig.forEach((f) => {
+    model.value[f.key] = '';
+  });
+  emit('limpar');
+  emit('filtrar', { ...model.value });
+};
 
 // Emitir eventos
-  const emit = defineEmits(['filtrar', 'limpar'])
+const emit = defineEmits(['filtrar', 'limpar']);
 
 // Expor dados para o componente pai
-  const model = defineModel({
-    type: Object,
-    default: () => ({
-      operacaoAcaoPolicial: '',
-      balaPerdida: '',
-      dentroCasa: '',
-      situacao: '',
-      faixaEtaria: '',
-      racaCor: '',
-      genero: '',
-    }),
-  })
+const model = defineModel({
+  type: Object,
+  default: () => ({
+    operacaoAcaoPolicial: '',
+    balaPerdida: '',
+    dentroCasa: '',
+    situacao: '',
+    faixaEtaria: '',
+    racaCor: '',
+    genero: '',
+  }),
+});
 </script>

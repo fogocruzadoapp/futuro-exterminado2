@@ -3,6 +3,9 @@
     class="ui-input-wrapper relative min-w-full"
     :class="{ 'border-yellow-300': isFocused, 'border-blue': !isFocused }"
   >
+    <label v-if="label && id" :for="id" :class="labelClass">
+      {{ label }}
+    </label>
     <input
       :type="type"
       :placeholder="placeholder"
@@ -16,6 +19,8 @@
       :minlength="minlength"
       :autofocus="autofocus"
       :value="modelValue"
+      :aria-label="label || placeholder || undefined"
+      v-bind="$attrs"
       @input="$emit('update:modelValue', $event.target.value)"
       @focus="isFocused = true"
       @blur="isFocused = false"
@@ -59,6 +64,14 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: '',
+  },
+  label: {
+    type: String,
+    default: '',
+  },
+  labelClass: {
+    type: String,
+    default: 'sr-only',
   },
   disabled: {
     type: Boolean,

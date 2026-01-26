@@ -4,11 +4,17 @@
     v-if="isOpen"
     class="fixed max-h-screen max-w-screen inset-0 z-50 flex flex-col items-center justify-center bg-blue-900/90 bg-opacity-50"
     @click="closeModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    @keydown.escape="closeModal"
   >
     <!-- Modal Content -->
     <div
+      ref="modalContentRef"
       class="relative w-full max-w-screen px-5 md:px-0 md:max-w-[630px] gap-6 flex justify-center flex-col items-center"
       @click.stop
+      @keydown.tab="handleTabKey"
     >
       <!-- Header -->
       <div class="text-white flex flex-col items-center justify-center gap-4">
@@ -16,9 +22,13 @@
           <SvgoLogo
             class="min-w-[400px] h-[40px] text-white"
             :fontControlled="false"
+            aria-hidden="true"
           />
         </div>
-        <div class="text-center text-xl">
+        <h2 id="modal-title" class="text-center text-xl sr-only">
+          Crianças e adolescentes estão na linha de tiro. Conheça os dados e histórias que não podem ser esquecidas.
+        </h2>
+        <div class="text-center text-xl" aria-hidden="true">
           Crianças e adolescentes estão na linha de tiro.<br />
           Conheça os dados e histórias que não podem ser esquecidas.
         </div>
@@ -28,7 +38,11 @@
         <!-- Img -->
         <div class="relative -z-10 md:translate-x-4 -rotate-3">
           <figure :class="`${props.imageSize} grayscale overflow-auto`">
-            <img :src="image" @error="handleImageError" class="w-full h-full object-cover" />
+            <img
+              :src="image"
+              @error="handleImageError"
+              class="w-full h-full object-cover"
+            />
           </figure>
         </div>
         <!-- Conteudo -->
@@ -75,18 +89,34 @@
             <div class="flex flex-col gap-8">
               <div class="flex flex-col text-base-1000">
                 <div class="flex flex-row gap-2 text-2xl mb-2">
-                  <div v-if="balaPerdida"><SvgoAmmo /></div>
-                  <div v-if="dentroDeCasa"><SvgoHouse /></div>
-                  <div v-if="acaoPolicial"><SvgoCar /></div>
+                  <div v-if="balaPerdida"><SvgoAmmo aria-hidden="true" /></div>
+                  <div v-if="dentroDeCasa"><SvgoHouse aria-hidden="true" /></div>
+                  <div v-if="acaoPolicial"><SvgoCar aria-hidden="true" /></div>
                 </div>
-                <div v-if="name && name !== 'null' && name !== 'undefined' && name !== 'Não identificado'" class="font-extrabold font-bigShoulders text-2xl">
+                <div
+                  v-if="
+                    name &&
+                    name !== 'null' &&
+                    name !== 'undefined' &&
+                    name !== 'Não identificado'
+                  "
+                  class="font-extrabold font-bigShoulders text-2xl"
+                >
                   {{ name }},
                 </div>
                 <div class="font-extrabold font-bigShoulders text-2xl">
-                  <span v-if="genre">{{ mapaGeneroTooltip(genre, ageGroup) }}</span>
+                  <span v-if="genre">{{
+                    mapaGeneroTooltip(genre, ageGroup)
+                  }}</span>
                   <span v-if="race">{{ mapaRacaTooltip(race, genre) }} </span>
-                  <span v-if="age"> de {{ age }} ano{{ age > 1 ? 's' : '' }}</span>
-                  <span v-if="ageGroup && !age">{{ ageGroup === 'Adolescente' ? ' entre 12 e 17 anos' : ' entre 0 e 11 anos' }}</span>
+                  <span v-if="age">
+                    de {{ age }} ano{{ age > 1 ? 's' : '' }}</span
+                  >
+                  <span v-if="ageGroup && !age">{{
+                    ageGroup === 'Adolescente'
+                      ? ' entre 12 e 17 anos'
+                      : ' entre 0 e 11 anos'
+                  }}</span>
                 </div>
                 <div class="text-white">
                   {{ mapaSituacaoTooltip(situation, genre) }}
@@ -101,6 +131,7 @@
                 <SvgoPin
                   class="w-[24px] h-6 text-base-1000 md:translate-y-0"
                   :fontControlled="false"
+                  aria-hidden="true"
                 />
                 <span>{{ toTitleCasePtBR(localidadeCompleta) }}</span>
               </div>
@@ -176,12 +207,22 @@
 
       <div class="flex flex-row gap-6 justify-center max-w-screen w-full">
         <!-- Close Button -->
-        <UiButton type="outline" size="big" @click="closeModal">
+        <UiButton 
+          ref="closeButtonRef"
+          type="outline" 
+          size="big" 
+          @click="closeModal"
+          aria-label="Fechar modal de detalhes da vítima"
+        >
           Fechar
         </UiButton>
         <!-- Ver no mapa -->
-        <NuxtLink :to="`/mapa?estado=${slugify(state)}&id=${id}`">
-          <UiButton size="big" @click="closeModal"> Ver no mapa </UiButton>
+        <NuxtLink
+          :to="`/mapa?estado=${slugify(state)}&id=${id}`"
+          @click="closeModal"
+          class="ui-button flex ease-in-out cursor-pointer transition-colors duration-200 p-3 leading-none flex-row gap-2 items-center justify-center font-medium px-4 py-2 text-lg min-w-[160px] md:min-w-[256px] w-fit h-fit bg-yellow-300 text-blue-900 hover:bg-yellow-100 border hover:border-yellow-300 border-transparent inside-border"
+        >
+          Ver no mapa
         </NuxtLink>
       </div>
     </div>
@@ -190,8 +231,12 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, nextTick, onMounted, onBeforeUnmount } from 'vue';
 const slugify = useSlugify();
+
+const modalContentRef = ref(null);
+const closeButtonRef = ref(null);
+const previousActiveElement = ref(null);
 
 // Props
 const props = defineProps({
@@ -284,13 +329,14 @@ const dataFormatada = computed(() => {
 });
 
 const localidadeCompleta = computed(() => {
-  const local= props.locality?props.locality: props.subNeighborhood?props.subNeighborhood: props.neighborhood?props.neighborhood:null;
-  return [
-    local,
-    props.city,
-  ]
-    .filter(Boolean)
-    .join(', ');
+  const local = props.locality
+    ? props.locality
+    : props.subNeighborhood
+    ? props.subNeighborhood
+    : props.neighborhood
+    ? props.neighborhood
+    : null;
+  return [local, props.city].filter(Boolean).join(', ');
 });
 
 const classeSituacao = computed(() => {
@@ -307,32 +353,34 @@ const classeSituacao = computed(() => {
   return props.situation;
 });
 
-
 //Functions
 function mapaGeneroTooltip(genero, grupo) {
   if (genero && genero !== 'Não identificado') {
     if (grupo == 'Criança') {
       if (genero === 'Homem cis' || genero === 'Homem trans') {
         return 'menino';
-      } else if (genero === 'Mulher cis' || genero === 'Mulher trans e travesti') {
+      } else if (
+        genero === 'Mulher cis' ||
+        genero === 'Mulher trans e travesti'
+      ) {
         return 'menina';
       }
-    }else if (grupo == 'Adolescente') {
+    } else if (grupo == 'Adolescente') {
       return 'adolescente';
     }
-  }else{
+  } else {
     return grupo;
   }
 }
 
 function mapaRacaTooltip(raca, genero) {
-  if(genero === 'Homem cis' || genero === 'Homem trans') {
+  if (genero === 'Homem cis' || genero === 'Homem trans') {
     if (raca === 'Negra') return ' negro';
     if (raca === 'Branca') return ' branco';
-  } else if(genero === 'Mulher cis' || genero === 'Mulher trans e travesti') {
+  } else if (genero === 'Mulher cis' || genero === 'Mulher trans e travesti') {
     if (raca === 'Negra') return ' negra';
     if (raca === 'Branca') return ' branca';
-  } else if(genero === 'Não identificado') {
+  } else if (genero === 'Não identificado') {
     if (raca === 'Negra') return 'negro(a)';
     if (raca === 'Branca') return 'branco(a)';
   } else {
@@ -344,19 +392,23 @@ function mapaSituacaoTooltip(situacao, genero) {
   if (situacao === 'Wounded') {
     if (genero === 'Homem cis' || genero === 'Homem trans') {
       return 'Ferido';
-    } else if (genero === 'Mulher cis' || genero === 'Mulher trans e travesti') {
+    } else if (
+      genero === 'Mulher cis' ||
+      genero === 'Mulher trans e travesti'
+    ) {
       return 'Ferida';
-    }
-    else if (genero === 'Não identificado') {
+    } else if (genero === 'Não identificado') {
       return 'Ferido(a)';
     }
   } else if (situacao === 'Dead') {
     if (genero === 'Homem cis' || genero === 'Homem trans') {
       return 'Morto';
-    } else if (genero === 'Mulher cis' || genero === 'Mulher trans e travesti') {
+    } else if (
+      genero === 'Mulher cis' ||
+      genero === 'Mulher trans e travesti'
+    ) {
       return 'Morta';
-    }
-    else if (genero === 'Não identificado') {
+    } else if (genero === 'Não identificado') {
       return 'Morto(a)';
     }
   }
@@ -364,30 +416,51 @@ function mapaSituacaoTooltip(situacao, genero) {
 
 // Scripts para normalizar texto da localidade
   const SMALL_WORDS = new Set([
-    'a','o','as','os',
-    'da','de','do','das','dos',
-    'e','em','no','na','nos','nas',
-    'ao','aos','à','às','ante','após','até','com',
+  'a',
+  'o',
+  'as',
+  'os',
+  'da',
+  'de',
+  'do',
+  'das',
+  'dos',
+  'e',
+  'em',
+  'no',
+  'na',
+  'nos',
+  'nas',
+  'ao',
+  'aos',
+  'à',
+  'às',
+  'ante',
+  'após',
+  'até',
+  'com',
   ]);
 
   const ALNUM = 'A-Za-zÀ-ÖØ-öø-ÿ0-9';
 
   function capitalizeWord(w) {
-    return w.replace(
-      new RegExp(`^[${ALNUM}]|([\'’][${ALNUM}])`, 'g'),
-      m => m.toUpperCase()
+  return w.replace(new RegExp(`^[${ALNUM}]|([\'’][${ALNUM}])`, 'g'), (m) =>
+    m.toUpperCase(),
     );
   }
 
   function capitalizeHyphenated(core, forceCap = false) {
-    return core.split(/(-)/).map(part => {
+  return core
+    .split(/(-)/)
+    .map((part) => {
       if (part === '-') return part;
       const bare = part.replace(new RegExp(`[^${ALNUM}'’]`, 'g'), '');
       if (!bare) return part;
       const isSmall = SMALL_WORDS.has(bare.toLowerCase());
       const shouldCap = forceCap || !isSmall;
       return shouldCap ? capitalizeWord(part) : part.toLowerCase();
-    }).join('');
+    })
+    .join('');
   }
 
   function toTitleCasePtBR(str) {
@@ -401,7 +474,11 @@ function mapaSituacaoTooltip(situacao, genero) {
     while (i < s.length) {
       // espaços
       const space = s.slice(i).match(/^\s+/);
-      if (space) { out += space[0]; i += space[0].length; continue; }
+    if (space) {
+      out += space[0];
+      i += space[0].length;
+      continue;
+    }
 
       // próximo "token" até espaço
       const tokenMatch = s.slice(i).match(/^[^\s]+/);
@@ -416,9 +493,17 @@ function mapaSituacaoTooltip(situacao, genero) {
         continue;
       }
 
-      const m = token.match(new RegExp(`^([^${ALNUM}'’-]*)([${ALNUM}'’-]+)([^${ALNUM}'’-]*)$`));
-      let lead = '', core = token, tail = '';
-      if (m) { lead = m[1]; core = m[2]; tail = m[3]; }
+    const m = token.match(
+      new RegExp(`^([^${ALNUM}'’-]*)([${ALNUM}'’-]+)([^${ALNUM}'’-]*)$`),
+    );
+    let lead = '',
+      core = token,
+      tail = '';
+    if (m) {
+      lead = m[1];
+      core = m[2];
+      tail = m[3];
+    }
 
       let c = capitalizeHyphenated(core, atSegmentStart);
 
@@ -446,14 +531,59 @@ function mapaSituacaoTooltip(situacao, genero) {
     event.target.src = '/images/vitimas/default.png';
   }
 
+// Função para capturar elementos focáveis dentro do modal
+const getFocusableElements = () => {
+  if (!modalContentRef.value) return [];
+  const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  return Array.from(modalContentRef.value.querySelectorAll(focusableSelectors)).filter(
+    (el) => !el.hasAttribute('disabled') && !el.hasAttribute('aria-hidden')
+  );
+};
+
+// Trap de foco - impede que Tab saia do modal
+const handleTabKey = (event) => {
+  const focusableElements = getFocusableElements();
+  if (focusableElements.length === 0) return;
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (event.shiftKey) {
+    // Shift + Tab
+    if (document.activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+    }
+  } else {
+    // Tab
+    if (document.activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  }
+};
+
 // Watchs
 watch(
   () => props.isOpen,
-  (isOpen) => {
+  async (isOpen) => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      // Salvar elemento ativo anterior
+      previousActiveElement.value = document.activeElement;
+      // Focar no botão de fechar quando o modal abrir
+      await nextTick();
+      if (closeButtonRef.value?.$el) {
+        closeButtonRef.value.$el.focus();
+      } else if (closeButtonRef.value) {
+        closeButtonRef.value.focus();
+      }
     } else {
       document.body.style.overflow = '';
+      // Retornar foco ao elemento anterior quando fechar
+      if (previousActiveElement.value && previousActiveElement.value.focus) {
+        previousActiveElement.value.focus();
+      }
     }
   },
 );

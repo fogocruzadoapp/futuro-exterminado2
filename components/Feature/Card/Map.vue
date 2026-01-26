@@ -25,7 +25,7 @@ const props = defineProps({
     type: String,
   },
   inicio: {
-    type: String,
+    type: [String, Number],
   },
   imagem: {
     type: String,
@@ -83,9 +83,13 @@ onMounted(() => {
         'circle-radius': [
           'step',
           ['get', 'point_count'],
-          7,   10, 9,
-          30, 12,
-          60, 16
+          7,
+          10,
+          9,
+          30,
+          12,
+          60,
+          16,
         ],
       },
     });
@@ -186,7 +190,7 @@ function fitToFeatures(m, features) {
   for (const f of features) bounds.extend(f.geometry.coordinates);
   m.fitBounds(bounds, { padding: 10, duration: 0 });
   m.setMinZoom(Math.min(m.getZoom(), 6));
-  requestAnimationFrame(() => m.resize())
+  requestAnimationFrame(() => m.resize());
 }
 </script>
 
@@ -195,24 +199,34 @@ function fitToFeatures(m, features) {
     class="w-full z-10 mb-8 md:mb-0 text-white flex flex-col gap-12 justify-between min-h-[460px]"
   >
     <div>
-      <div class="font-bigShoulders font-extrabold text-5xl uppercase">
+      <!-- Texto acessível completo - lido primeiro -->
+      <h2 class="sr-only">
+        {{ cidade }}{{ regiao ? ', ' + regiao : '' }} e Região metropolitana
+      </h2>
+      <!-- Elementos visuais -->
+      <h2 class="font-bigShoulders font-extrabold text-5xl uppercase" aria-hidden="true">
         {{ cidade }}
-      </div>
-      <div class="font-bigShouldersRegular text-3xl uppercase mb-2">
+      </h2>
+      <p class="font-bigShouldersRegular text-3xl uppercase mb-2" aria-hidden="true">
         {{ regiao }}
-      </div>
+      </p>
 
-      <div class="font-bigShouldersRegular text-3xl uppercase mb-2">
+      <p class="font-bigShouldersRegular text-3xl uppercase mb-2" aria-hidden="true">
         e Região metropolitana
-      </div>
+      </p>
     </div>
 
     <figure class="w-full h-full relative">
       <div class="-translate-y-1/2 absolute top-0 left-0 w-full h-fit z-20">
-        <div class="font-bigShoulders leading-none font-extrabold text-7xl">
-          {{ vitimas.length }}
+        <!-- Texto acessível completo - lido primeiro -->
+        <div class="sr-only">
+          {{ vitimas.length }} vítimas desde {{ new Date(inicio).getFullYear() }}
         </div>
-        <div>vítimas desde {{ new Date(inicio).getFullYear() }}</div>
+        <!-- Elementos visuais -->
+        <p class="font-bigShoulders leading-none font-extrabold text-7xl" aria-hidden="true">
+          {{ vitimas.length }}
+        </p>
+        <p aria-hidden="true">vítimas desde {{ new Date(inicio).getFullYear() }}</p>
       </div>
       <!-- Filter -->
       <div
@@ -220,17 +234,24 @@ function fitToFeatures(m, features) {
       ></div>
 
       <!-- Image -->
-      <div class="w-full h-[304px] overflow-hidden pointer-events-none flex bg-yellow-200 justify-center items-center" ref="mapContainer"></div>
+      <div
+        class="w-full h-[304px] overflow-hidden pointer-events-none flex bg-yellow-200 justify-center items-center"
+        ref="mapContainer"
+        role="img"
+        :aria-label="`Mapa mostrando ${vitimas.length} vítimas em ${cidade}${regiao ? ', ' + regiao : ''}`"
+      ></div>
 
       <!-- SVG Mask Overlay -->
-      <div class="absolute top-0 left-0 w-full h-full z-10 pointer-events-none">
+      <div class="absolute top-0 left-0 w-full h-full z-10 pointer-events-none" aria-hidden="true">
         <!-- Mascara 1-->
-        <svg v-if="index==0"
+        <svg
+          v-if="index == 0"
           class="w-full h-full"
           viewBox="0 0 304 270"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
+          aria-hidden="true"
         >
           <path
             d="M303.992 0V34.999H243.992L303.99 0H164L304 82V0H303.992Z"
@@ -247,45 +268,77 @@ function fitToFeatures(m, features) {
         </svg>
 
         <!-- Mascara 2-->
-        <svg v-if="index==1"
+        <svg
+          v-if="index == 1"
           class="w-full h-full"
           viewBox="0 0 304 240"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none">
-          <path d="M0.371429 166L123 240L0.371426 240L0.371429 166Z" fill="#160f38"/>
-          <path d="M303.992 0V41.209L234.587 0H136.993L289.154 88.9258H199.892L304 147.486V0H303.992Z" fill="#160f38"/>
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0.371429 166L123 240L0.371426 240L0.371429 166Z"
+            fill="#160f38"
+          />
+          <path
+            d="M303.992 0V41.209L234.587 0H136.993L289.154 88.9258H199.892L304 147.486V0H303.992Z"
+            fill="#160f38"
+          />
         </svg>
 
         <!-- Mascara 3-->
-         <svg v-if="index==2"
+        <svg
+          v-if="index == 2"
             class="w-full h-full"
             viewBox="0 0 304 240"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none">
-            <path d="M0.198776 -6.31979e-06L146.027 88L0.198772 88L0.198776 -6.31979e-06Z" fill="#160f38"/>
-            <path d="M145.065 240L263.005 171.074H200.089L304.197 112.514V147.001L304.199 147V240H145.065ZM304.198 196.209H231.198L304.198 238.209V196.209Z" fill="#160f38"/>
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0.198776 -6.31979e-06L146.027 88L0.198772 88L0.198776 -6.31979e-06Z"
+            fill="#160f38"
+          />
+          <path
+            d="M145.065 240L263.005 171.074H200.089L304.197 112.514V147.001L304.199 147V240H145.065ZM304.198 196.209H231.198L304.198 238.209V196.209Z"
+            fill="#160f38"
+          />
         </svg>
 
         <!-- Mascara 4-->
-         <svg v-else
+        <svg
+          v-else
             class="w-full h-full"
             viewBox="0 0 304 240"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none">
-            <path d="M0.000167847 72L119.314 -7.62939e-06L0.000164687 -2.43504e-06L0.000167847 72Z" fill="#160f38"/>
-            <path d="M304.313 239.791V198.791L235.26 239.791H151.314L295.814 154.791H234.314L304.314 114.791V239.791H304.313ZM234.908 240L235.26 239.791H304.313V240H234.908Z" fill="#160f38"/>
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0.000167847 72L119.314 -7.62939e-06L0.000164687 -2.43504e-06L0.000167847 72Z"
+            fill="#160f38"
+          />
+          <path
+            d="M304.313 239.791V198.791L235.26 239.791H151.314L295.814 154.791H234.314L304.314 114.791V239.791H304.313ZM234.908 240L235.26 239.791H304.313V240H234.908Z"
+            fill="#160f38"
+          />
         </svg>
-        
       </div>
       <!-- Button -->
       <div
         class="absolute translate-y-1/2 z-20 bottom-0 left-0 w-full flex justify-center items-center h-fit"
       >
-        <NuxtLink :to="{ path: '/mapa', query: { estado: slugify(estado) } }">
-          <UiButton>{{ botaoTexto }}</UiButton>
+        <NuxtLink
+          :to="{ path: '/mapa', query: { estado: slugify(estado) } }"
+          class="ui-button flex ease-in-out cursor-pointer transition-colors duration-200 p-3 leading-none flex-row gap-2 items-center justify-center font-medium px-2 py-2 w-fit h-fit bg-yellow-300 text-blue-900 hover:bg-yellow-100 border hover:border-yellow-300 border-transparent inside-border"
+          :aria-label="
+            cidade ? `Ver mapa da região ${cidade}` : 'Ver mapa da região'
+          "
+        >
+          {{ botaoTexto }}
         </NuxtLink>
       </div>
     </figure>

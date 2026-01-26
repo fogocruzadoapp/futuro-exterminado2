@@ -113,8 +113,12 @@ const positionMortos = computed(() => {
           left: positionFeridos.left,
           top: positionFeridos.top,
         }"
+        aria-label="Feridas"
       >
-        <div class="text-white text-xl font-extrabold font-bigShoulders">
+        <div
+          class="text-white text-xl font-extrabold font-bigShoulders"
+          aria-label="Feridas: {{ props.situacaoFeridos }}"
+        >
           {{ props.situacaoFeridos }}
         </div>
       </div>
@@ -129,8 +133,12 @@ const positionMortos = computed(() => {
           left: positionMortos.left,
           top: positionMortos.top,
         }"
+        aria-label="Mortas"
       >
-        <div class="text-white text-xl font-extrabold font-bigShoulders">
+        <div
+          class="text-white text-xl font-extrabold font-bigShoulders"
+          aria-label="Mortas: {{ props.situacaoMortos }}"
+        >
           {{ props.situacaoMortos }}
         </div>
       </div>

@@ -2,11 +2,21 @@
   <div class="w-full">
     <!-- Container das Tabs -->
     <div class="overflow-x-auto w-full" style="max-width: calc(100vw - 5.5rem)">
-      <nav class="flex space-x-0 min-w-max">
+      <nav
+        role="tablist"
+        aria-label="Navegação por abas"
+        class="flex space-x-0 min-w-max"
+      >
         <button
-          v-for="tab in tabs"
+          v-for="(tab, index) in tabs"
           :key="tab.id"
-          @click="activeTab = tab.id"
+          :id="`tab-${tab.id}`"
+          :aria-selected="activeTab === tab.id"
+          :aria-controls="`tabpanel-${tab.id}`"
+          :tabindex="activeTab === tab.id ? 0 : -1"
+          role="tab"
+          @click="selectTab(tab.id)"
+          @keydown="handleKeydown($event, index)"
           :class="[
             tabColors.border,
             activeTab === tab.id
@@ -14,7 +24,7 @@
               : `${tabColors.inactive.text} ${tabColors.inactive.bg} ${tabColors.inactive.hover}`,
               'uppercase'
           ]"
-          class="whitespace-nowrap"
+          class="whitespace-nowrap focus-visible:outline-2 focus-visible:outline-yellow-300 focus-visible:outline-offset-2"
         >
           {{ tab.label }}
         </button>
@@ -26,6 +36,9 @@
       <div
         v-for="tab in tabs"
         :key="tab.id"
+        :id="`tabpanel-${tab.id}`"
+        :aria-labelledby="`tab-${tab.id}`"
+        role="tabpanel"
         v-show="activeTab === tab.id"
         class="space-y-6"
       >
@@ -43,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, computed, useSlots } from 'vue';
+import { ref, computed, useSlots, nextTick } from 'vue';
 
 const props = defineProps({
   // Tab inicial ativa (opcional)
@@ -136,6 +149,44 @@ const activeTab = ref(props.defaultTab || tabs.value[0]?.id || '');
 
 // Emit para quando a tab muda (opcional)
 const emit = defineEmits(['tabChange']);
+
+// Função para selecionar uma tab
+const selectTab = (tabId) => {
+  activeTab.value = tabId;
+  // Foca no botão da tab selecionada
+  nextTick(() => {
+    const tabButton = document.getElementById(`tab-${tabId}`);
+    if (tabButton) {
+      tabButton.focus();
+    }
+  });
+};
+
+// Função para lidar com navegação por teclado
+const handleKeydown = (event, currentIndex) => {
+  let targetIndex = currentIndex;
+
+  switch (event.key) {
+    case 'ArrowLeft':
+      event.preventDefault();
+      targetIndex = currentIndex > 0 ? currentIndex - 1 : tabs.value.length - 1;
+      selectTab(tabs.value[targetIndex].id);
+      break;
+    case 'ArrowRight':
+      event.preventDefault();
+      targetIndex = currentIndex < tabs.value.length - 1 ? currentIndex + 1 : 0;
+      selectTab(tabs.value[targetIndex].id);
+      break;
+    case 'Home':
+      event.preventDefault();
+      selectTab(tabs.value[0].id);
+      break;
+    case 'End':
+      event.preventDefault();
+      selectTab(tabs.value[tabs.value.length - 1].id);
+      break;
+  }
+};
 
 // Watcher para emitir mudanças
 watch(

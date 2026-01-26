@@ -32,6 +32,7 @@ function handleToggle(id) {
       v-for="item in menu"
       :key="item.id"
       v-bind="item"
+      :label="item.label"
       :active="activeId === item.id"
       @toggle="handleToggle(item.id)"
     >

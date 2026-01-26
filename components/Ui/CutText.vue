@@ -5,15 +5,24 @@
       v-if="hasExtras"
       class="cut-text"
       @click="handleClick"
-      :class="{ active: isActive}"
+      :class="[
+        'focus:outline-none focus-visible:ring-2 focus:ring-amber-500 block',
+        { active: isActive }
+      ]"
+      :aria-label="
+        isActive
+          ? `Fechar menu de opções do estado ${props.label}`
+          : `Abrir menu de opções do estado ${props.label}`
+      "
+      :aria-expanded="isActive"
     >
-      <span class="invisible select-none">
+      <span class="invisible select-none" aria-hidden="true">
         <slot />
       </span>
-      <span class="cut-text-left">
+      <span class="cut-text-left" aria-hidden="true">
         <slot />
       </span>
-      <span class="cut-text-right">
+      <span class="cut-text-right" aria-hidden="true">
         <slot />
       </span>
     </button>
@@ -21,36 +30,47 @@
     <!-- Se não houver extras, botão é um link normal -->
     <NuxtLink
       v-else
+      :aria-label="props.label"
       :to="link"
-      :class="['cut-text', { active: route.path === link }]"
+      :class="[
+        'cut-text focus:outline-none focus-visible:ring-2 focus:ring-amber-500 block',
+        { active: route.path === link }
+      ]"
+      :aria-expanded="route.path === link"
     >
-      <span class="invisible select-none">
+      <span class="invisible select-none" aria-hidden="true">
         <slot />
       </span>
-      <span class="cut-text-left">
+      <span class="cut-text-left" aria-hidden="true">
         <slot />
       </span>
-      <span class="cut-text-right">
+      <span class="cut-text-right" aria-hidden="true">
         <slot />
       </span>
     </NuxtLink>
 
     <transition name="fade-expand">
       <!-- Área com detalhes visível só se showExtras for true -->
-      <div
+      <ul
         v-if="isActive"
-        class="extras-content flex gap-4 justify-center items-center mt-2"
+        class="extras-content flex gap-4 justify-center items-center mt-2 list-none"
       >
-        <NuxtLink v-if="mapa" :to="mapa"  >
-          <UiLabel :class="{ active: isMapaActive }"
-            >Mapa
-            <SvgoMap />
-          </UiLabel>
-        </NuxtLink>
-        <NuxtLink v-if="details" :to="details">
-          <UiLabel :class="{ active: isDetailsActive }">Detalhe <SvgoChart /></UiLabel>
-        </NuxtLink>
-      </div>
+        <li v-if="mapa">
+          <NuxtLink :to="mapa" class="focus:outline-none focus-visible:ring-2 focus:ring-amber-500 block">
+            <UiLabel :class="{ active: isMapaActive } "
+              >Mapa
+              <SvgoMap aria-hidden="true" />
+            </UiLabel>
+          </NuxtLink>
+        </li>
+        <li v-if="details">
+          <NuxtLink :to="details" class="focus:outline-none focus-visible:ring-2 focus:ring-amber-500 block">
+            <UiLabel :class="{ active: isDetailsActive }"
+              >Detalhe <SvgoChart aria-hidden="true"
+            /></UiLabel>
+          </NuxtLink>
+        </li>
+      </ul>
     </transition>
   </div>
 </template>
@@ -70,6 +90,11 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  label: {
+    type: String,
+    required: false,
+    default: null,
+  },
   details: {
     type: String,
     required: false,
@@ -85,36 +110,49 @@ const props = defineProps({
 
 // Computed
 const estadoFromMapa = computed(() => {
-  if (!props.mapa) return null
+  if (!props.mapa) return null;
   try {
     // suporta paths relativos
-    const url = new URL(props.mapa, 'http://example.local')
-    const q = url.searchParams.get('estado')
-    if (q) return q
-  } catch (_) { /* ignora */ }
+    const url = new URL(props.mapa, 'http://example.local');
+    const q = url.searchParams.get('estado');
+    if (q) return q;
+  } catch (_) {
+    /* ignora */
+  }
   // fallback bem simples: última parte após '='
-  return props.mapa.includes('=') ? props.mapa.split('=').pop() : null
-})
+  return props.mapa.includes('=') ? props.mapa.split('=').pop() : null;
+});
 
-const isMapaActive = computed(() =>
-  route.path === '/mapa' &&
-  estadoFromMapa.value &&
-  route.query?.estado === estadoFromMapa.value
-)
+const isMapaActive = computed(
+  () =>
+    route.path === '/mapa' &&
+    estadoFromMapa.value &&
+    route.query?.estado === estadoFromMapa.value,
+);
 
-const isDetailsActive = computed(() =>
-  !!props.details && route.path === props.details
-)
+const isDetailsActive = computed(
+  () => !!props.details && route.path === props.details,
+);
 
-const isActive = computed(() =>
-  showExtras.value || isMapaActive.value || isDetailsActive.value || !!props.active
-)
+const isActive = computed(
+  () =>
+    showExtras.value ||
+    isMapaActive.value ||
+    isDetailsActive.value ||
+    !!props.active,
+);
 
 // Emits
 const emit = defineEmits(['toggle']);
 
 // Watchers
-watch(() => props.active, v => { showExtras.value = !!v }, { immediate: true })
+watch(
+  () => props.active,
+  (v) => {
+    showExtras.value = !!v;
+  },
+  { immediate: true },
+);
 
 // Funções
 function handleClick() {
@@ -180,8 +218,8 @@ function handleClick() {
   max-height: 1000px;
   opacity: 1;
 }
-.extras-content{
-  .active{
+.extras-content {
+  .active {
     @apply text-yellow-300;
   }
 }

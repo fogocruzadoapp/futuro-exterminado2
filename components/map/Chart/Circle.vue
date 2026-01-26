@@ -1,9 +1,10 @@
 <script setup>
 // Imports e configs
-import { computed } from 'vue';
+import { computed, ref, reactive, onMounted } from 'vue';
 import { useFloatingTooltip } from '#imports';
 import { Title } from '#components';
 const { tip, showAtEvent, moveWithEvent, hide } = useFloatingTooltip();
+const { formatPercentageForAria } = useAccessiblePercentage();
 
 // Data
 const wrapRef = ref(null);
@@ -47,6 +48,49 @@ const totalN = computed(() => feridosN.value + mortosN.value);
 const feridosS = computed(() => toNum(props.situacaoFeridos));
 const mortosS = computed(() => toNum(props.situacaoMortos));
 const totalS = computed(() => feridosS.value + mortosS.value);
+
+// Computed para aria-label do gráfico
+const ariaLabelGrafico = computed(() => {
+  const total = feridosN.value + mortosN.value;
+  if (total === 0) return 'Gráfico de vítimas: sem dados';
+
+  const pctMortos = total > 0 ? (mortosS.value / total) * 100 : 0;
+  const pctFeridos = total > 0 ? (feridosS.value / total) * 100 : 0;
+
+  return `Gráfico de vítimas: ${
+    mortosS.value
+  } mortas (${formatPercentageForAria(pctMortos)}), ${
+    feridosS.value
+  } feridas (${formatPercentageForAria(pctFeridos)})`;
+});
+
+// Computed para aria-label dos grupos individuais
+const ariaLabelMortas = computed(() => {
+  const total = totalN.value;
+  if (total === 0) return 'Mortas: 0 (0 por cento)';
+  const pct = (mortosS.value / total) * 100;
+  return `Mortas: ${mortosS.value} (${formatPercentageForAria(pct)})`;
+});
+
+const ariaLabelFeridas = computed(() => {
+  const total = totalN.value;
+  if (total === 0) return 'Feridas: 0 (0 por cento)';
+  const pct = (feridosS.value / total) * 100;
+  return `Feridas: ${feridosS.value} (${formatPercentageForAria(pct)})`;
+});
+
+// Computed para aria-label das legendas
+const ariaLabelLegendas = computed(() => {
+  const total = feridosN.value + mortosN.value;
+  if (total === 0) return 'Sem dados de vítimas';
+
+  const pctFeridos = total > 0 ? (feridosS.value / total) * 100 : 0;
+  const pctMortos = total > 0 ? (mortosS.value / total) * 100 : 0;
+
+  return `Legenda: ${feridosS.value} feridas (${formatPercentageForAria(
+    pctFeridos,
+  )}), ${mortosS.value} mortas (${formatPercentageForAria(pctMortos)})`;
+});
 
 // proporções (para tamanho por ÁREA)
 const ratioFeridos = computed(() =>
@@ -145,7 +189,12 @@ function onMoveBar(e) {
 
 <template>
   <div class="relative flex justify-center my-1">
-    <div class="w-full max-h-40 min-h-32 relative" ref="wrapRef">
+    <div
+      class="w-full max-h-40 min-h-32 relative"
+      ref="wrapRef"
+      role="group"
+      :aria-label="ariaLabelGrafico"
+    >
       <!-- Mortos (direita) -->
       <div
         v-if="mortosN > 0"
@@ -160,6 +209,7 @@ function onMoveBar(e) {
           marginTop: offsets.mortos?.mt + 'px',
           display: offsets.mortos?.display ?? 'block',
         }"
+        aria-hidden="true"
         @mouseenter="
           onEnterBar($event, {
             label: 'morta',
@@ -206,6 +256,7 @@ function onMoveBar(e) {
           marginTop: offsets.feridos?.mt + 'px',
           display: offsets.feridos?.display ?? 'block',
         }"
+        aria-hidden="true"
         @mouseenter="
           onEnterBar($event, {
             label: 'ferida',
@@ -238,13 +289,14 @@ function onMoveBar(e) {
           </div>
         </div>
       </div>
-      <div  class="relative w-full block pt-[80%]"></div>
+      <div class="relative w-full block pt-[80%]"></div>
     </div>
 
     <!-- Legendas -->
     <div
       v-if="!detalhes && !semLegenda"
       class="absolute bottom-0 left-0 flex flex-col gap-1"
+      aria-hidden="true"
     >
       <div class="text-violet-light text-sm leading-none">
         {{
@@ -262,6 +314,7 @@ function onMoveBar(e) {
     <div
       v-if="!detalhes && !semLegenda"
       class="absolute top-0 right-0 flex flex-col gap-1"
+      aria-hidden="true"
     >
       <div class="inline-flex items-center gap-1">
         <div class="w-3 h-3 bg-coral rounded-full"></div>
@@ -275,6 +328,8 @@ function onMoveBar(e) {
         }}%
       </div>
     </div>
+
+    <!-- Legenda para leitores de tela - removida para evitar duplicidade, já está no aria-label do container principal -->
   </div>
 
   <ClientOnly>

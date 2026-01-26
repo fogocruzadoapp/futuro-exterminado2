@@ -32,14 +32,21 @@
       <div
         ref="sidebarRef"
         class="md:hidden z-40"
-        @click="sidebarOpen = !sidebarOpen"
+        role="region"
+        aria-label="Painel lateral com informações e filtros"
         @touchstart="handleTouchStart"
         @mousedown="handleMouseDown"
       >
         <!-- Handle/Indicator -->
-        <div class="flex justify-center py-2 bg-indigo/60 backdrop-blur-md">
-          <div class="w-12 h-1 bg-white/30 rounded-full"></div>
-        </div>
+        <button
+          type="button"
+          @click="sidebarOpen = !sidebarOpen"
+          class="w-full flex justify-center py-2 bg-indigo/60 backdrop-blur-md border-none bg-transparent cursor-pointer"
+          :aria-label="sidebarOpen ? 'Fechar painel lateral' : 'Abrir painel lateral'"
+          :aria-expanded="sidebarOpen"
+        >
+          <div class="w-12 h-1 bg-white/30 rounded-full" aria-hidden="true"></div>
+        </button>
         <!-- Sidebar Content -->
         <MapSidebar />
       </div>

@@ -4,10 +4,10 @@ import { set } from '@vueuse/core';
 const route = useRoute();
 const router = useRouter();
 const slugify = useSlugify();
+const { formatPercentageForAria } = useAccessiblePercentage();
 
 const controleGeral = useState('controleGeral', () => false);
 if (!controleGeral.value) navigateTo('/');
-
 
 // Data
 const vitimas = inject('vitimas');
@@ -28,14 +28,14 @@ const mapScrollProgress = ref(0);
 
 // Tamanhos dos círculos proporcionais aos valores
 const circleSizes = computed(() => {
-  if (!intro.value)
+  if (!intro)
     return {
       feridos: { mobile: 142, desktop: 288 },
       mortos: { mobile: 188, desktop: 366 },
     };
 
-  const feridos = intro.value.feridosCount; // 840
-  const mortos = intro.value.mortosCount; // 1053
+  const feridos = intro.feridosCount; // 840
+  const mortos = intro.mortosCount; // 1053
   const total = feridos + mortos; // 1893
 
   // Tamanhos base (mínimo) e máximo
@@ -66,6 +66,26 @@ const circleSizes = computed(() => {
       desktop: Math.round(mortosDesktop),
     },
   };
+});
+
+// Textos completos para leitores de tela
+const feridasGroupLabel = computed(() => {
+  if (!intro) return '';
+  const percent = formatPercentageForAria(intro.feridosPercent);
+  return `${percent} das vítimas ficaram feridas. Total de ${intro.feridosCount} feridas.`;
+});
+
+const mortasGroupLabel = computed(() => {
+  if (!intro) return '';
+  const percent = formatPercentageForAria(intro.mortosPercent);
+  return `${percent} das vítimas foram mortas. Total de ${intro.mortosCount} mortas.`;
+});
+
+const estatisticasCompletas = computed(() => {
+  if (!intro) return 'Estatísticas de vítimas: carregando...';
+  const percentFeridas = formatPercentageForAria(intro.feridosPercent);
+  const percentMortas = formatPercentageForAria(intro.mortosPercent);
+  return `Estatísticas de vítimas: ${percentFeridas} das vítimas ficaram feridas. Total de ${intro.feridosCount} feridas. ${percentMortas} das vítimas foram mortas. Total de ${intro.mortosCount} mortas.`;
 });
 
 // Animação do número
@@ -180,8 +200,8 @@ onMounted(() => {
 
 const liberaPagina = () => {
   setTimeout(() => {
-      document.body.style.overflow = '';
-      document.querySelector('.hero').style.zIndex = '39';
+    document.body.style.overflow = '';
+    document.querySelector('.hero').style.zIndex = '39';
     // Intersection Observer para animar quando o elemento ficar visível
     nextTick(() => {
       if (numberElementRef.value) {
@@ -209,7 +229,6 @@ const liberaPagina = () => {
     });
   }, 2000);
 };
-
 </script>
 <!-- pages/introducao.vue -->
 <template>
@@ -350,8 +369,8 @@ const liberaPagina = () => {
                   : index == estados.length - 2
                   ? ' e '
                   : ''
-              }}
-            </template>.
+              }} </template
+            >.
           </div>
           <div
             ref="numberElementRef"
@@ -366,10 +385,16 @@ const liberaPagina = () => {
         <div
           class="flex flex-col md:flex-row px-5 items-center justify-between gap-6"
         >
+          <!-- Texto acessível completo do bloco - lido primeiro -->
+          <div class="sr-only" role="status" aria-live="polite">
+            {{ estatisticasCompletas }}
+          </div>
+          
           <!-- Feridas -->
           <div class="w-full flex flex-col">
             <div
               class="text-violet font-bigShoulders font-extrabold text-5xl lg:text-7xl"
+              aria-hidden="true"
             >
               {{
                 intro.feridosPercent.toLocaleString('pt-BR', {
@@ -378,62 +403,73 @@ const liberaPagina = () => {
                 })
               }}%
             </div>
-            <div class="md:text-4xl text-2xl">ficaram</div>
+            <div class="md:text-4xl text-2xl" aria-hidden="true">ficaram</div>
             <div
               class="text-violet font-bigShoulders font-extrabold text-5xl lg:text-7xl"
+              aria-hidden="true"
             >
               feridas
             </div>
           </div>
+          
           <!-- Grafico -->
-            <div class="relative w-full aspect-square">
-              <div class="relative w-full h-full">
+          <div class="relative w-full aspect-square">
+            <div class="relative w-full h-full" aria-hidden="true">
+              <!-- FERIDOS -->
+              <div
+                class="circle-feridos flex flex-col absolute rounded-full bg-violet/80 items-center justify-center z-10 transition-all duration-500"
+                :style="{
+                  /* % baseadas no container: mobile assume base 288px, desktop 560px */
+                  '--feridos-w-m':
+                    (circleSizes.feridos.mobile / 288) * 100 + '%',
+                  '--feridos-h-m':
+                    (circleSizes.feridos.mobile / 288) * 100 + '%',
+                  '--feridos-w-d':
+                    (circleSizes.feridos.desktop / 560) * 100 + '%',
+                  '--feridos-h-d':
+                    (circleSizes.feridos.desktop / 560) * 100 + '%',
 
-                <!-- FERIDOS -->
-                <div
-                  class="circle-feridos flex flex-col absolute rounded-full bg-violet/80 items-center justify-center z-10 transition-all duration-500"
-                  :style="{
-                    /* % baseadas no container: mobile assume base 288px, desktop 560px */
-                    '--feridos-w-m': ((circleSizes.feridos.mobile  / 288) * 100) + '%',
-                    '--feridos-h-m': ((circleSizes.feridos.mobile  / 288) * 100) + '%',
-                    '--feridos-w-d': ((circleSizes.feridos.desktop / 560) * 100) + '%',
-                    '--feridos-h-d': ((circleSizes.feridos.desktop / 560) * 100) + '%',
-
-                    /* offsets 12px => % do container (12/288 e 12/560) */
-                    '--feridos-off-m': ((12 / 288) * 100) + '%',
-                    '--feridos-off-d': ((12 / 560) * 100) + '%',
-                  }"
+                  /* offsets 12px => % do container (12/288 e 12/560) */
+                  '--feridos-off-m': (12 / 288) * 100 + '%',
+                  '--feridos-off-d': (12 / 560) * 100 + '%',
+                }"
+              >
+                <span
+                  class="circle-feridos-text font-bigShoulders font-extrabold transition-all duration-500"
                 >
-                  <span class="circle-feridos-text font-bigShoulders font-extrabold transition-all duration-500">
-                    {{ intro.feridosCount }}
-                  </span>
-                </div>
+                  {{ intro.feridosCount }}
+                </span>
+              </div>
 
-                <!-- MORTOS -->
-                <div
-                  class="circle-mortos flex flex-col absolute rounded-full bg-coral items-center justify-center transition-all duration-500"
-                  :style="{
-                    '--mortos-w-m': ((circleSizes.mortos.mobile  / 288) * 100) + '%',
-                    '--mortos-h-m': ((circleSizes.mortos.mobile  / 288) * 100) + '%',
-                    '--mortos-w-d': ((circleSizes.mortos.desktop / 560) * 100) + '%',
-                    '--mortos-h-d': ((circleSizes.mortos.desktop / 560) * 100) + '%',
+              <!-- MORTOS -->
+              <div
+                class="circle-mortos flex flex-col absolute rounded-full bg-coral items-center justify-center transition-all duration-500"
+                :style="{
+                  '--mortos-w-m': (circleSizes.mortos.mobile / 288) * 100 + '%',
+                  '--mortos-h-m': (circleSizes.mortos.mobile / 288) * 100 + '%',
+                  '--mortos-w-d':
+                    (circleSizes.mortos.desktop / 560) * 100 + '%',
+                  '--mortos-h-d':
+                    (circleSizes.mortos.desktop / 560) * 100 + '%',
 
-                    '--mortos-off-m': ((12 / 288) * 100) + '%',
-                    '--mortos-off-d': ((12 / 560) * 100) + '%',
-                  }"
+                  '--mortos-off-m': (12 / 288) * 100 + '%',
+                  '--mortos-off-d': (12 / 560) * 100 + '%',
+                }"
+              >
+                <span
+                  class="circle-mortos-text font-bigShoulders font-extrabold transition-all duration-500"
                 >
-                  <span class="circle-mortos-text font-bigShoulders font-extrabold transition-all duration-500">
-                    {{ intro.mortosCount }}
-                  </span>
-                </div>
-
+                  {{ intro.mortosCount }}
+                </span>
               </div>
             </div>
+          </div>
 
           <!-- Mortas -->
           <div class="w-full flex flex-col text-right">
             <div
               class="text-coral font-bigShoulders font-extrabold text-5xl lg:text-7xl"
+              aria-hidden="true"
             >
               {{
                 intro.mortosPercent.toLocaleString('pt-BR', {
@@ -442,9 +478,10 @@ const liberaPagina = () => {
                 })
               }}%
             </div>
-            <div class="md:text-4xl text-2xl">foram</div>
+            <div class="md:text-4xl text-2xl" aria-hidden="true">foram</div>
             <div
               class="text-coral font-bigShoulders font-extrabold text-5xl lg:text-7xl"
+              aria-hidden="true"
             >
               mortas
             </div>
@@ -489,7 +526,9 @@ const liberaPagina = () => {
         </div>
 
         <!-- Animacao Cards Vitimas -->
-        <div class="absolute top-0 left-0 w-full h-full z-20 overflow-hidden px-5">
+        <div
+          class="absolute top-0 left-0 w-full h-full z-20 overflow-hidden px-5"
+        >
           <div
             class="flex flex-col container mx-auto items-center justify-center px-5 pt-[700px] pb-[180px] md:pt-[800px] md:pb-[800px]"
           >
@@ -511,19 +550,19 @@ const liberaPagina = () => {
           <div
             class="max-w-[800px] text-2xl md:text-4xl flex flex-col gap-[380px] md:gap-[500px] text-center text-blue-200"
           >
-            <div>
+            <p>
               As crianças e adolescentes brasileiros estão em risco, mas a
               violência armada não afeta todos da mesma maneira.
-            </div>
-            <div>
+            </p>
+            <p>
               Os dados ajudam a entender quem são as vítimas e como elas são
               atingidas.
-            </div>
-            <div>A vítima pode ter sido morta ou ficado ferida.</div>
-            <div>
+            </p>
+            <p>A vítima pode ter sido morta ou ficado ferida.</p>
+            <p>
               Em todos os casos, cada ponto no mapa indica uma vida e uma
               família marcadas para sempre pela violência armada.
-            </div>
+            </p>
           </div>
         </div>
       </FeatureMapSection>
@@ -538,7 +577,8 @@ const liberaPagina = () => {
           <div
             class="text-white text-2xl max-w-[768px] md:text-4xl text-center"
           >
-            Explore o mapa para saber mais sobre os dados e histórias de cada região.
+            Explore o mapa para saber mais sobre os dados e histórias de cada
+            região.
           </div>
 
           <div
@@ -564,14 +604,15 @@ const liberaPagina = () => {
 </template>
 <style scoped>
 /* Círculo Feridos - Desktop */
-.circle-feridos{
+.circle-feridos {
   /* mobile por padrão */
   top: var(--feridos-off-m);
   left: var(--feridos-off-m);
   width: var(--feridos-w-m);
   height: var(--feridos-h-m);
 }
-.circle-feridos .circle-feridos-text, .circle-mortos .circle-mortos-text{
+.circle-feridos .circle-feridos-text,
+.circle-mortos .circle-mortos-text {
   font-size: clamp(
     70px,
     calc(70px + (130 - 70) * ((100vw - 320px) / (768 - 320))),
@@ -580,7 +621,7 @@ const liberaPagina = () => {
   line-height: 1;
 }
 
-.circle-mortos{
+.circle-mortos {
   bottom: var(--mortos-off-m);
   right: var(--mortos-off-m);
   width: var(--mortos-w-m);
@@ -588,15 +629,15 @@ const liberaPagina = () => {
 }
 
 /* desktop (md: 768px por padrão no Tailwind) */
-@media (min-width: 768px){
-  .circle-feridos{
+@media (min-width: 768px) {
+  .circle-feridos {
     top: var(--feridos-off-d);
     left: var(--feridos-off-d);
     width: var(--feridos-w-d);
     height: var(--feridos-h-d);
   }
 
-  .circle-mortos{
+  .circle-mortos {
     bottom: var(--mortos-off-d);
     right: var(--mortos-off-d);
     width: var(--mortos-w-d);

@@ -253,7 +253,7 @@
       </svg>
     </div>
     <!-- IMG -->
-    <img src="/images/sectionmap/map.png" class="w-full h-full object-cover" />
+    <img src="/images/sectionmap/map.png" class="w-full h-full object-cover" alt="" aria-hidden="true" />
   </figure>
 </template>
 

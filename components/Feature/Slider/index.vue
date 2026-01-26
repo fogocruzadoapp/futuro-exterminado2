@@ -12,18 +12,6 @@
       }"
       :style="{ transform: `translateX(-${currentIndex * 100}%)` }"
     >
-      <!-- Duplicate last slide at the beginning for infinite loop -->
-      <div v-if="items.length > 1" class="w-full flex-shrink-0">
-        <FeatureSliderCard
-          :type="items[items.length - 1].type"
-          :nome="items[items.length - 1].nome"
-          :descricao="items[items.length - 1].descricao"
-          :localidade="items[items.length - 1].localidade"
-          :thumbnail="items[items.length - 1].thumbnail"
-          :video-url="items[items.length - 1].videoUrl"
-        />
-      </div>
-
       <!-- Original slides -->
       <div
         v-for="(item, index) in items"
@@ -37,22 +25,8 @@
           :localidade="item.localidade"
           :thumbnail="item.thumbnail"
           :video-url="item.videoUrl"
-          :is-active="
-            currentIndex === (props.items.length > 1 ? index + 1 : index)
-          "
+          :is-active="currentIndex === index"
           :key="`card-${index}-${currentIndex}`"
-        />
-      </div>
-
-      <!-- Duplicate first slide at the end for infinite loop -->
-      <div v-if="items.length > 1" class="w-full flex-shrink-0">
-        <FeatureSliderCard
-          :type="items[0].type"
-          :nome="items[0].nome"
-          :descricao="items[0].descricao"
-          :localidade="items[0].localidade"
-          :thumbnail="items[0].thumbnail"
-          :video-url="items[0].videoUrl"
         />
       </div>
     </div>
@@ -64,13 +38,14 @@
         <!-- Previous Arrow -->
         <button
           @click="goToPrevious"
-          :disabled="isAnimating"
+          :disabled="isAnimating || currentIndex === 0"
           :class="{
             'bg-amber-500 hover:bg-yellow-300 hover:bg-opacity-70 cursor-pointer':
-              !isAnimating,
-            'bg-gray-400  opacity-50': isAnimating,
+              !isAnimating && currentIndex > 0,
+            'bg-gray-400  opacity-50 cursor-not-allowed': isAnimating || currentIndex === 0,
           }"
           class="h-11 w-11 bg-opacity-50 text-white flex items-center justify-center transition-all duration-200 ease-in-out"
+          aria-label="Slide anterior"
         >
           <svg
             width="20"
@@ -78,6 +53,7 @@
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path
               d="M12.707 16.4141L6 9.70703L10.3496 5.35742L10.7969 6.25293L10.7969 4.91016L12.707 3L14.1211 4.41406L8.82812 9.70703L10.8486 11.7266L9.79687 12.2529L11.374 12.2529L14.1211 15L12.707 16.4141Z"
@@ -89,13 +65,14 @@
         <!-- Next Arrow -->
         <button
           @click="goToNext"
-          :disabled="isAnimating"
+          :disabled="isAnimating || currentIndex === items.length - 1"
           :class="{
             'bg-amber-500 hover:bg-yellow-300 hover:bg-opacity-70 cursor-pointer':
-              !isAnimating,
-            'bg-gray-400 cursor-not-allowed opacity-50': isAnimating,
+              !isAnimating && currentIndex < items.length - 1,
+            'bg-gray-400 cursor-not-allowed opacity-50': isAnimating || currentIndex === items.length - 1,
           }"
           class="h-11 w-11 bg-opacity-50 text-white flex items-center justify-center transition-all duration-200 ease-in-out"
+          aria-label="Próximo slide"
         >
           <svg
             width="20"
@@ -103,6 +80,7 @@
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path
               d="M7.41406 3L14.1211 9.70703L10.5752 13.2529L8.79687 13.2529L9.98242 13.8457L7.41406 16.4141L6 15L11.293 9.70703L8.49121 6.90625L9.79687 6.25293L7.83887 6.25293L6 4.41406L7.41406 3Z"
@@ -141,8 +119,8 @@ const props = defineProps({
   },
 });
 
-// Estado do slider (começa no primeiro slide original, não na duplicata)
-const currentIndex = ref(props.items.length > 1 ? 1 : 0);
+// Estado do slider (começa no primeiro slide)
+const currentIndex = ref(0);
 const isTransitioning = ref(true);
 const isAnimating = ref(false);
 const sliderRef = ref(null);
@@ -190,10 +168,10 @@ const handleScroll = () => {
   }, 100); // Debounce de 100ms
 };
 
-// Funções de navegação com looping infinito
+// Funções de navegação sem loop infinito
 const goToNext = () => {
-  // Previne cliques múltiplos durante animação
-  if (isAnimating.value) return;
+  // Previne cliques múltiplos durante animação ou se já está no último slide
+  if (isAnimating.value || currentIndex.value >= props.items.length - 1) return;
 
   // Fecha todos os vídeos antes de mudar de slide
   closeAllVideos();
@@ -201,27 +179,15 @@ const goToNext = () => {
   isAnimating.value = true;
   currentIndex.value++;
 
-  // Se chegou no slide duplicado do final, move instantaneamente para o primeiro original
-  if (currentIndex.value === props.items.length + 1) {
-    setTimeout(() => {
-      isTransitioning.value = false;
-      currentIndex.value = 1;
-      setTimeout(() => {
-        isTransitioning.value = true;
-        isAnimating.value = false; // Libera para próximo clique
-      }, 50);
-    }, 1500); // Aguarda a transição terminar
-  } else {
-    // Para transições normais, libera após a transição
+  // Libera após a transição
     setTimeout(() => {
       isAnimating.value = false;
     }, 1500);
-  }
 };
 
 const goToPrevious = () => {
-  // Previne cliques múltiplos durante animação
-  if (isAnimating.value) return;
+  // Previne cliques múltiplos durante animação ou se já está no primeiro slide
+  if (isAnimating.value || currentIndex.value <= 0) return;
 
   // Fecha todos os vídeos antes de mudar de slide
   closeAllVideos();
@@ -229,22 +195,10 @@ const goToPrevious = () => {
   isAnimating.value = true;
   currentIndex.value--;
 
-  // Se chegou no slide duplicado do início, move instantaneamente para o último original
-  if (currentIndex.value === -1) {
-    setTimeout(() => {
-      isTransitioning.value = false;
-      currentIndex.value = props.items.length - 1;
-      setTimeout(() => {
-        isTransitioning.value = true;
-        isAnimating.value = false; // Libera para próximo clique
-      }, 50);
-    }, 1500); // Aguarda a transição terminar
-  } else {
-    // Para transições normais, libera após a transição
+  // Libera após a transição
     setTimeout(() => {
       isAnimating.value = false;
     }, 1500);
-  }
 };
 
 // Lifecycle hooks

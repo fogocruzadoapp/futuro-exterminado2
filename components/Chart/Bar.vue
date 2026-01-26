@@ -1,11 +1,12 @@
 <template>
   <div class="chart-bar w-full">
     <!-- Barra única dividida -->
-    <div class="flex h-8 w-full overflow-hidden"
-        @mouseenter="onEnterBar($event, chartData)"
-        @mousemove="onMoveBar"
-        @mouseleave="hide"
-        >
+    <div
+      class="flex h-8 w-full overflow-hidden"
+      @mouseenter="onEnterBar($event, chartData)"
+      @mousemove="onMoveBar"
+      @mouseleave="hide"
+    >
       <div
         v-for="(item, index) in chartData"
         :key="index"
@@ -62,13 +63,19 @@
             getTextColorClass(item, index),
             index === chartData.length - 1 ? 'flex justify-end' : '',
           ]"
+          :aria-label="formatPercentageForAria(item.percentage)"
         >
-          {{ item.percentage.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 }) }}%
+          {{
+            item.percentage.toLocaleString('pt-BR', {
+              style: 'decimal',
+              maximumFractionDigits: 1,
+            })
+          }}%
         </span>
       </div>
     </div>
   </div>
-  
+
   <ClientOnly>
     <UiTooltip v-bind="tip" />
   </ClientOnly>
@@ -76,144 +83,158 @@
 
 <script setup>
 // Imports e configs
-  import { computed } from 'vue';
-  import { useFloatingTooltip } from '#imports'
+import { computed } from 'vue';
+import { useFloatingTooltip } from '#imports';
 import { objectEntries, objectPick } from '@vueuse/core';
-  const { tip, showAtEvent, moveWithEvent, hide } = useFloatingTooltip()
+const { tip, showAtEvent, moveWithEvent, hide } = useFloatingTooltip();
+const { formatPercentageForAria, formatPercentageStringForAria } =
+  useAccessiblePercentage();
 
 // Props
-  const props = defineProps({
-    // Dados do gráfico
-    data: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    // Cor padrão das barras (hex ou classe CSS)
-    defaultColor: {
-      type: String,
-      default: '#6366F1', // indigo-500 (roxo/violeta como na imagem)
-    },
-    // Classes CSS para cores (bg-blue-600, etc)
-    colorClasses: {
-      type: Array,
-      default: () => ['bg-indigo-500', 'bg-purple-400'],
-    },
-    title: {
-      type: String,
-      default: '',
-    },
-  });
+const props = defineProps({
+  // Dados do gráfico
+  data: {
+    type: Array,
+    required: true,
+    default: () => [],
+  },
+  // Cor padrão das barras (hex ou classe CSS)
+  defaultColor: {
+    type: String,
+    default: '#6366F1', // indigo-500 (roxo/violeta como na imagem)
+  },
+  // Classes CSS para cores (bg-blue-600, etc)
+  colorClasses: {
+    type: Array,
+    default: () => ['bg-indigo-500', 'bg-purple-400'],
+  },
+  title: {
+    type: String,
+    default: '',
+  },
+});
 
 // Computeds
-  // Calcular total para percentuais
-  const totalValue = computed(() => {
-    const values = props.data.map((item) =>
-      typeof item === 'object' ? item.value : item,
-    );
-    return values.reduce((sum, value) => sum + value, 0);
-  });
+// Calcular total para percentuais
+const totalValue = computed(() => {
+  const values = props.data.map((item) =>
+    typeof item === 'object' ? item.value : item,
+  );
+  return values.reduce((sum, value) => sum + value, 0);
+});
 
-  // Processar dados do gráfico
-  const chartData = computed(() => {
-    return props.data.map((item) => {
-      let value, label, color, colorClass, useHexColor;
+// Processar dados do gráfico
+const chartData = computed(() => {
+  return props.data.map((item) => {
+    let value, label, color, colorClass, useHexColor;
 
-      if (typeof item === 'object') {
-        value = item.value || 0;
-        label = item.label || '';
-        color = item.color || props.defaultColor;
-        colorClass = item.colorClass || null;
-        useHexColor = item.useHexColor || false;
-      } else {
-        value = item;
-        label = String(item);
-        color = props.defaultColor;
-        colorClass = null;
-        useHexColor = false;
-      }
-
-      // Calcular percentual
-      const percentage =
-        totalValue.value > 0 ? ((value / totalValue.value) * 100).toFixed(1) : 0;
-
-      return {
-        label,
-        value,
-        color,
-        colorClass,
-        useHexColor,
-        percentage: parseFloat(percentage),
-      };
-    });
-  });
-
-// Funções
-  // Função para converter cor de fundo em cor de texto
-  const getTextColorClass = (item, index) => {
-    // Se tem colorClass específica, converte bg- para text-
-    if (item.colorClass) {
-      return item.colorClass.replace('bg-', 'text-');
+    if (typeof item === 'object') {
+      value = item.value || 0;
+      label = item.label || '';
+      color = item.color || props.defaultColor;
+      colorClass = item.colorClass || null;
+      useHexColor = item.useHexColor || false;
+    } else {
+      value = item;
+      label = String(item);
+      color = props.defaultColor;
+      colorClass = null;
+      useHexColor = false;
     }
 
-    // Se tem colorClass padrão, converte bg- para text-
-    if (props.colorClasses[index]) {
-      return props.colorClasses[index].replace('bg-', 'text-');
-    }
-
-    // Fallback para cor padrão
-    return 'text-indigo-500';
-  };
-
-  // Função para calcular a posição inicial de cada seção
-  const getItemStartPosition = (index) => {
-    if (index === 0) return 0;
-
-    let cumulativePercentage = 0;
-    for (let i = 0; i < index; i++) {
-      cumulativePercentage += chartData.value[i].percentage;
-    }
-
-    return cumulativePercentage;
-  };
-
-  // Função para obter o estilo de posicionamento
-  const getItemPositionStyle = (index) => {
-    const isLast = index === chartData.value.length - 1;
-
-    if (isLast) {
-      return {
-        right: '0px',
-        left: 'auto',
-        transform: 'translateX(0)',
-      };
-    }
+    // Calcular percentual
+    const percentage =
+      totalValue.value > 0 ? ((value / totalValue.value) * 100).toFixed(1) : 0;
 
     return {
-      left: `${getItemStartPosition(index)}%`,
-      right: 'auto',
+      label,
+      value,
+      color,
+      colorClass,
+      useHexColor,
+      percentage: parseFloat(percentage),
+    };
+  });
+});
+
+// Funções
+// Função para converter cor de fundo em cor de texto
+const getTextColorClass = (item, index) => {
+  // Se tem colorClass específica, converte bg- para text-
+  if (item.colorClass) {
+    return item.colorClass.replace('bg-', 'text-');
+  }
+
+  // Se tem colorClass padrão, converte bg- para text-
+  if (props.colorClasses[index]) {
+    return props.colorClasses[index].replace('bg-', 'text-');
+  }
+
+  // Fallback para cor padrão
+  return 'text-indigo-500';
+};
+
+// Função para calcular a posição inicial de cada seção
+const getItemStartPosition = (index) => {
+  if (index === 0) return 0;
+
+  let cumulativePercentage = 0;
+  for (let i = 0; i < index; i++) {
+    cumulativePercentage += chartData.value[i].percentage;
+  }
+
+  return cumulativePercentage;
+};
+
+// Função para obter o estilo de posicionamento
+const getItemPositionStyle = (index) => {
+  const isLast = index === chartData.value.length - 1;
+
+  if (isLast) {
+    return {
+      right: '0px',
+      left: 'auto',
       transform: 'translateX(0)',
     };
-  };
-  
-  // Tooltip
-    function tooltipContent(rows) {
-      let html = `<div class="font-bigShoulders text-2xl uppercase font-bold text-blue-900">${props.title}</div>
-                  <hr class="border-t border-neutral-400 mt-2 mb-2" />`
-      
-      for (const row of rows) {
-        html += `<div class="flex items-center gap-2">
-                  <span class="w-3 h-3 rounded-xl ${row.colorClass || ''}"
-                ${row.useHexColor ? `style="background-color:${row.color}"` : ''}"></span>
-                  <span class="text-md text-neutral-600 lowercase">${row.value} ${row.label}${row.value > 1 ? 's' : ''} (${row.percentage.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })}%)</span>
-                </div>`
-      }
-      html += '</div>';
-      return html;
-    }
+  }
 
-    function onEnterBar(e, rows) { showAtEvent(e, tooltipContent(rows)) }
-    function onMoveBar(e) { moveWithEvent(e) }
+  return {
+    left: `${getItemStartPosition(index)}%`,
+    right: 'auto',
+    transform: 'translateX(0)',
+  };
+};
+
+// Tooltip
+function tooltipContent(rows) {
+  let html = `<div class="font-bigShoulders text-2xl uppercase font-bold text-blue-900">${props.title}</div>
+                  <hr class="border-t border-neutral-400 mt-2 mb-2" />`;
+
+  for (const row of rows) {
+    const pctAria = formatPercentageForAria(row.percentage);
+    html += `<div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-xl ${row.colorClass || ''}"
+                ${
+                  row.useHexColor ? `style="background-color:${row.color}"` : ''
+                }"></span>
+                  <span class="text-md text-neutral-600 lowercase" aria-label="${pctAria}">${
+      row.value
+    } ${row.label}${row.value > 1 ? 's' : ''} (${row.percentage.toLocaleString(
+      'pt-BR',
+      { style: 'decimal', maximumFractionDigits: 1 },
+    )}%)</span>
+                </div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function onEnterBar(e, rows) {
+  showAtEvent(e, tooltipContent(rows));
+}
+function onMoveBar(e) {
+  moveWithEvent(e);
+}
 </script>
 
 <style scoped>

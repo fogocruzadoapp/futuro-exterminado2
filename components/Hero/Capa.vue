@@ -25,14 +25,18 @@ const fixedImages = [
 ];
 
 // Usa imagens fixas para evitar problemas de hidratação
-const randomImages = fixedImages;
+const randomImages = ref([...fixedImages])
+
+onMounted(() => {
+  randomImages.value = getRandomImages(5)
+})
 
 // Deslocamento padrão para todas as vítimas
 const defaultIntensity = 60;
 
 // URL do vídeo de introdução vinda do arquivo de configuração
 const introVideoUrl = config.introVideoUrl || '';
-const showIntroVideo = Boolean(config.showIntroVideo && introVideoUrl);
+const showIntroVideo = ref(Boolean(config.showIntroVideo && introVideoUrl))
 
 // Configuração de animação automática para cada vítima
 const animationConfig = {
@@ -59,25 +63,27 @@ const getRandomPosition = (intensity) => ({
 });
 
 // Função para animar uma vítima com movimento contínuo
+const timeouts = new Set()
+
 const animateVictim = (victimKey, config) => {
-  let currentTarget = { x: 0, y: 0 };
-  let nextTarget = getRandomPosition(config.intensity);
+  let nextTarget = getRandomPosition(config.intensity)
 
   const animate = () => {
-    // Move para a próxima posição aleatória
-    currentTarget = nextTarget;
-    animationStates.value[victimKey] = currentTarget;
+    animationStates.value[victimKey] = nextTarget
+    nextTarget = getRandomPosition(config.intensity)
 
-    // Gera próxima posição aleatória
-    nextTarget = getRandomPosition(config.intensity);
+    const id = setTimeout(animate, config.duration)
+    timeouts.add(id)
+  }
 
-    // Reinicia a animação continuamente
-    setTimeout(animate, config.duration);
-  };
+  const startId = setTimeout(animate, config.delay)
+  timeouts.add(startId)
+}
 
-  // Inicia após o delay
-  setTimeout(animate, config.delay);
-};
+onBeforeUnmount(() => {
+  timeouts.forEach(clearTimeout)
+  timeouts.clear()
+})
 
 // Função para obter o transform de uma vítima
 const getVictimTransform = (victimKey) => {
@@ -92,9 +98,22 @@ onMounted(() => {
     animateVictim(victimKey, animationConfig[victimKey]);
   });
 });
+
+// Função para fechar o modal
+const closeModal = () => {
+  showIntroVideo.value = false
+};
 </script>
 
 <template>
+  
+  <FeatureModalVideo
+    v-if="showIntroVideo"
+    :isOpen="showIntroVideo"
+    :url="introVideoUrl"
+    @close="closeModal"
+  />
+
   <section
     class="absolute top-0 left-0 min-h-screen h-screen w-screen min-w-screen z-[49] bg-blue-800 overflow-hidden transition-opacity duration-[500ms] ease-out"
   >
@@ -105,35 +124,32 @@ onMounted(() => {
       >
         <!-- Logo Fogo Cruzado -->
         <figure>
-          <img src="~/assets/images/logo-fogo-cruzado.png" class="w-[172px]" />
+          <img src="~/assets/images/logo-fogo-cruzado.png" class="w-[172px]" alt="Logo Fogo Cruzado" />
         </figure>
         <!-- Logo Intro  -->
         <div
-          v-if="!showIntroVideo"
           class="flex flex-col items-center justify-center md:gap-6 w-full"
         >
           <SvgoLogoHorizontal
             class="md:w-[800px] md:h-[80px] max-w-full text-white text-shadow-2xl"
             :fontControlled="false"
           />
-          <div class="text-white text-lg w-full text-center text-shadow-2xl">
+          <h1 class="text-white text-lg w-full text-center text-shadow-2xl sr-only">
+            Futuro Exterminado - Crianças e adolescentes estão na linha de tiro. Conheça os dados e
+            histórias que não podem ser esquecidas.
+          </h1>
+          <div class="text-white text-lg w-full text-center text-shadow-2xl" aria-hidden="true">
             Crianças e adolescentes estão na linha de tiro. Conheça os dados e
             histórias que não podem ser esquecidas.
           </div>
         </div>
-        <!--  Video Intro -->
-        <FeatureVideoPlayerYoutube
-          v-if="showIntroVideo"
-          :url="introVideoUrl"
-          class="w-full max-w-4xl"
-        />
         <!-- Botão Iniciar -->
         <div
           class="flex flex-col items-center justify-center gap-4 relative z-40"
         >
-          <div @click="startIntro" class="cursor-pointer">
-            <UiButton> Iniciar </UiButton>
-          </div>
+          <UiButton @click="startIntro" aria-label="Iniciar navegação para a página de introdução">
+            Iniciar
+          </UiButton>
           <div
             class="text-white text-sm md:w-full w-2/3 text-center md:text-left"
           >

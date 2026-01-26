@@ -52,6 +52,7 @@
 import { computed, ref } from 'vue';
 import { useFloatingTooltip } from '#imports';
 const { tip, showAtEvent, moveWithEvent, hide } = useFloatingTooltip();
+const { formatPercentageStringForAria } = useAccessiblePercentage();
 
 // Estado para controlar hover
 const hoveredIndex = ref(null);
@@ -104,10 +105,11 @@ function tooltipContent(row) {
   const fer = row?.crimes?.feridas ?? 0;
   const mor = row?.crimes?.mortas ?? 0;
   const pct = row?.percent != null ? Number(row.percent).toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 }) + '%' : '';
+  const pctAria = row?.percent != null ? formatPercentageStringForAria(pct) : '';
 
   return `
         <div class="font-bigShoulders text-2xl uppercase font-bold text-blue-900">${row.label}</div>
-        <div class="text-lg text-blue-900">${pct} das vítimas</div>
+        <div class="text-lg text-blue-900" aria-label="${pctAria}">${pct} das vítimas</div>
         <hr class="border-t border-neutral-400 mt-2 mb-2" />
         <div class="flex items-center gap-2">
           <span class="w-3 h-3 rounded-xl ${props.palette[0]}"></span>

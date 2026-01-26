@@ -21,7 +21,13 @@
       <section>
         <div class="container flex flex-col mx-auto px-3 md:px-0 py-10">
           <FeaturePainel color="#F6F2F7">
-            <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+            <UiTypography
+              variant="h6"
+              component="h1"
+              color="blue"
+              uppercase
+              class="mb-8"
+            >
               Perfil das vítimas
             </UiTypography>
 
@@ -344,7 +350,13 @@
       <section>
         <div class="container flex flex-col mx-auto px-3 md:px-0 py-10">
           <FeaturePainel color="#F6F2F7">
-            <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+            <UiTypography
+              variant="h6"
+              component="h2"
+              color="blue"
+              uppercase
+              class="mb-8"
+            >
               Perfil das vítimas
             </UiTypography>
 
@@ -576,7 +588,13 @@
       <section>
         <div class="container flex flex-col mx-auto px-3 md:px-0 py-10">
           <FeaturePainel color="#F6F2F7">
-            <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+            <UiTypography
+              variant="h6"
+              component="h2"
+              color="blue"
+              uppercase
+              class="mb-8"
+            >
               Perfil das vítimas
             </UiTypography>
             <div class="flex flex-col gap-10 md:gap-12">
@@ -703,14 +721,20 @@
       <LayoutBottomBar>
         <div class="flex flex-row gap-4 items-center justify-center">
           <UiSelect
+            id="select-estado-details"
             v-model="estadoSelecionado"
             :options="estados"
-            label="Estado"
+            label="Alterar região"
             placeholder="Selecione o estado"
             dropdownDirection="up"
+            aria-label="Alterar região"
           >
             <template #label>
-              <UiLink> Alterar região </UiLink>
+              <span
+                class="text-yellow-300 hover:text-yellow-300/90 cursor-pointer relative transition-colors duration-200"
+              >
+                Alterar região
+              </span>
             </template>
           </UiSelect>
 
@@ -739,7 +763,7 @@
     <!-- Casos por tipo de ocorrência e perfil da vítima -->
     <section class="bg-base-200">
       <div class="container flex flex-col mx-auto px-3 md:px-0 py-10 md:py-20">
-        <UiTypography variant="h2" uppercase>
+        <UiTypography variant="h2" component="h2" uppercase>
           Casos por tipo de ocorrência e perfil da vítima
         </UiTypography>
         <ChartLegenda
@@ -805,7 +829,7 @@
         class="container flex flex-col mx-auto px-3 md:px-0 text-center justify-center items-center text-white md:gap-24 pb-24 pt-8"
       >
         <div class="w-full">
-          <UiTypography variant="h2" uppercase>
+          <UiTypography variant="h2" component="h2" uppercase>
             Explore o mapa para conhecer as vítimas
           </UiTypography>
           <div class="flex justify-center items-center">
@@ -813,7 +837,12 @@
           </div>
         </div>
         <div class="w-full flex flex-col gap-8">
-          <UiTypography variant="h4" class="font-bigShouldersRegular" uppercase>
+          <UiTypography
+            variant="h4"
+            component="h3"
+            class="font-bigShouldersRegular"
+            uppercase
+          >
             ou acesse os detalhes de outras regiões
           </UiTypography>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
@@ -823,7 +852,12 @@
                   <img src="/assets/images/cidades/icon-belem.png" alt="Icon" />
                 </figure>
                 <div class="flex flex-col">
-                  <UiTypography variant="h2" class="mb-0" uppercase>
+                  <UiTypography
+                    variant="h2"
+                    component="h3"
+                    class="mb-0"
+                    uppercase
+                  >
                     Belem
                   </UiTypography>
                   <div class="font-bigShouldersRegular text-3xl uppercase">
@@ -844,7 +878,12 @@
                   />
                 </figure>
                 <div class="flex flex-col">
-                  <UiTypography variant="h2" class="mb-0" uppercase>
+                  <UiTypography
+                    variant="h2"
+                    component="h3"
+                    class="mb-0"
+                    uppercase
+                  >
                     Salvador
                   </UiTypography>
                   <div class="font-bigShouldersRegular text-3xl uppercase">
@@ -865,7 +904,12 @@
                   />
                 </figure>
                 <div class="flex flex-col">
-                  <UiTypography variant="h2" class="mb-0" uppercase>
+                  <UiTypography
+                    variant="h2"
+                    component="h3"
+                    class="mb-0"
+                    uppercase
+                  >
                     Recife
                   </UiTypography>
                   <div class="font-bigShouldersRegular text-3xl uppercase">
@@ -895,7 +939,12 @@
       <div
         class="container flex flex-col md:flex-row mx-auto px-3 md:px-0 md:py-16 py-10 justify-center md:justify-between items-center md:items-start text-center md:text-left gap-6"
       >
-        <UiTypography variant="h4" class="text-blue-1000" uppercase>
+        <UiTypography
+          variant="h4"
+          component="h2"
+          class="text-blue-1000"
+          uppercase
+        >
           Não encontrou o que procurava ou quer acessar mais dados?
         </UiTypography>
         <div>
