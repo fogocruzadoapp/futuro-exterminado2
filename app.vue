@@ -1,4 +1,7 @@
 <script setup>
+  import '~/assets/css/fonts.css';
+  import '~/assets/css/global.css';
+  
   const { progress, isLoading, start } = useLoadingIndicator({
     duration: 2000,
     throttle: 200,
@@ -10,9 +13,11 @@
   <NuxtLayout>
     <NuxtPage/>
   </NuxtLayout>
-  <div class="fixed z-50 top-0 left-0 flex flex-col justify-center items-center bg-blue-1000 text-white p-4 w-full h-full" v-if="isLoading">
-    <div class="w-8 h-8 rounded-full border-4 border-white border-l-transparent animate-spin"></div>
-  </div>
+  <ClientOnly>
+    <div class="fixed z-50 top-0 left-0 flex flex-col justify-center items-center bg-blue-1000 text-white p-4 w-full h-full" v-if="isLoading">
+      <div class="w-8 h-8 rounded-full border-4 border-white border-l-transparent animate-spin"></div>
+    </div>
+  </ClientOnly>
 </template>
 <style scoped>
   .animate-spin {

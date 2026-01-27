@@ -18,12 +18,12 @@ const props = defineProps({
           :fontControlled="false"
         />
       </div>
-      <div class="text-white text-2xl md:text-4xl text-shadow-2xl opacity-0 transition-all duration-3000 delay-7000"
+      <h1 class="text-white text-2xl md:text-4xl text-shadow-2xl opacity-0 transition-all duration-3000 delay-7000"
       :style="{ opacity: props.start ? 1 : 0, translateY: props.start ? '0' : '3rem' }"
       >
         Uma plataforma que mapeia dados e preserva histórias que não podem ser
         esquecidas
-      </div>
+      </h1>
     </div>
   </div>
 </template>

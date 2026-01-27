@@ -11,7 +11,7 @@
         <img
           v-if="!thumbnailError"
           :src="thumbnail"
-          :alt="alt || 'Video thumbnail'"
+          :alt="alt || 'Miniatura do vídeo'"
           class="w-full h-full object-cover"
           style="filter: grayscale(100%) brightness(70%)"
           @error="onThumbnailError"
@@ -39,8 +39,10 @@
       <div
         class="absolute inset-0 bg-opacity-30 flex items-center justify-center"
       >
-        <div
-          class="bg-yellow-300 bg-opacity-90 h-12 w-12 flex items-center justify-center hover:bg-opacity-100 transition-all duration-300 transform hover:scale-110"
+        <button
+          @click.stop="startLoading"
+          class="bg-yellow-300 bg-opacity-90 h-12 w-12 flex items-center justify-center hover:bg-opacity-100 transition-all duration-300 transform hover:scale-110 border-none cursor-pointer"
+          aria-label="Reproduzir vídeo"
         >
           <svg
             width="20"
@@ -48,6 +50,7 @@
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path
               d="M4.16602 2.5L15.8327 10L4.16602 17.5V2.5Z"
@@ -57,7 +60,7 @@
               stroke-linejoin="round"
             />
           </svg>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -105,7 +108,8 @@
       <!-- Botão de fechar -->
       <button
         @click="closeVideo"
-        class="absolute top-0 right-0 z-30 bg-yellow-300 w-12 h-12 flex items-center justify-center bg-opacity-50 hover:bg-opacity-70 text-white p-2 transition-all duration-200 cursor-pointer"
+        class="absolute top-0 right-0 z-30 bg-yellow-300 w-12 h-12 flex items-center justify-center bg-opacity-50 hover:bg-opacity-70 text-white p-2 transition-all duration-200 cursor-pointer border-none"
+        aria-label="Fechar vídeo"
       >
         <svg
           width="20"
@@ -113,6 +117,7 @@
           viewBox="0 0 20 20"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <path
             d="M10.0049 8.52246L12.5312 5.99609L13.5859 7.89648L11.4775 10.0049L18 16.5283L16.5283 18L13.1475 14.6299L10.0049 8.96094V11.4775L3.47168 18L2 16.5283L8.52246 10.0049L2 3.47168L3.47168 2L10.0049 8.52246ZM18 3.47168L14.1816 7.30078V4.34668L16.5283 2L18 3.47168Z"
@@ -149,6 +154,7 @@
             <button
               @click="togglePlayPause"
               class="text-white hover:text-gray-300 transition-colors cursor-pointer"
+              :aria-label="isPlaying ? 'Pausar vídeo' : 'Reproduzir vídeo'"
             >
               <svg
                 v-if="isPlaying"
@@ -157,6 +163,7 @@
                 viewBox="0 0 12 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
                 <path d="M4 16V4.93871e-07H0V16H4Z" fill="#FFAD33" />
                 <path
@@ -171,6 +178,7 @@
                 viewBox="0 0 13 15"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
                 <path
                   fill-rule="evenodd"
@@ -192,6 +200,7 @@
             <button
               @click="toggleMute"
               class="text-white hover:text-gray-300 transition-colors cursor-pointer"
+              :aria-label="isMuted ? 'Ativar som' : 'Desativar som'"
             >
               <svg
                 v-if="isMuted"
@@ -200,6 +209,7 @@
                 viewBox="0 0 20 18"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
                 <path
                   d="M13.9388 7.11091L14.9995 6.05025L19.9492 11L18.8886 12.0607L13.9388 7.11091Z"
@@ -222,6 +232,7 @@
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 class="equalizer-muted -translate-y-0.5"
+                aria-hidden="true"
               >
                 <!-- Barra 1 (esquerda) -->
                 <path
@@ -248,6 +259,11 @@
             <button
               @click="toggleFullscreen"
               class="text-white hover:text-gray-300 transition-colors cursor-pointer"
+              :aria-label="
+                isFullscreen
+                  ? 'Sair do modo tela cheia'
+                  : 'Entrar em modo tela cheia'
+              "
             >
               <svg
                 v-if="isFullscreen"
@@ -256,6 +272,7 @@
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
                 <path
                   d="M5 16H8V19H10V14H5V16ZM8 8H5V10H10V5H8V8ZM14 19H16V16H19V14H14V19ZM16 8V5H14V10H19V8H16Z"
@@ -269,6 +286,7 @@
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
               >
                 <path
                   d="M7 14H5V19H10V17H7V14ZM5 10H7V7H10V5H5V10ZM17 17H14V19H19V14H17V17ZM14 5V7H17V10H19V5H14Z"
@@ -302,7 +320,6 @@
             ></div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -312,7 +329,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 
 // Data
-const barRef = ref(null)
+const barRef = ref(null);
 
 const props = defineProps({
   thumbnail: {
@@ -354,33 +371,39 @@ const progress = computed(() => {
 });
 
 // Funções
-const clamp01 = (v) => Math.max(0, Math.min(1, v))
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
 function seekFromClientX(clientX) {
-  if (!videoRef.value || !barRef.value || !isFinite(duration.value) || duration.value === 0) return
-  const rect = barRef.value.getBoundingClientRect()
-  const p = clamp01((clientX - rect.left) / rect.width)
-  const t = p * duration.value
-  videoRef.value.currentTime = t
-  currentTime.value = t
+  if (
+    !videoRef.value ||
+    !barRef.value ||
+    !isFinite(duration.value) ||
+    duration.value === 0
+  )
+    return;
+  const rect = barRef.value.getBoundingClientRect();
+  const p = clamp01((clientX - rect.left) / rect.width);
+  const t = p * duration.value;
+  videoRef.value.currentTime = t;
+  currentTime.value = t;
 }
 
 function onBarPointerDown(e) {
-  if (!barRef.value) return
-  isDragging.value = true
-  barRef.value.setPointerCapture?.(e.pointerId)
-  seekFromClientX(e.clientX)
+  if (!barRef.value) return;
+  isDragging.value = true;
+  barRef.value.setPointerCapture?.(e.pointerId);
+  seekFromClientX(e.clientX);
 }
 
 function onBarPointerMove(e) {
-  if (!isDragging.value) return
-  seekFromClientX(e.clientX)
+  if (!isDragging.value) return;
+  seekFromClientX(e.clientX);
 }
 
 function onBarPointerUp(e) {
-  if (!isDragging.value) return
-  isDragging.value = false
-  barRef.value?.releasePointerCapture?.(e.pointerId)
+  if (!isDragging.value) return;
+  isDragging.value = false;
+  barRef.value?.releasePointerCapture?.(e.pointerId);
 }
 
 // Funções de controle das etapas

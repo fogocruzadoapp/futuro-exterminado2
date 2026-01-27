@@ -49,7 +49,8 @@
     </svg>
     <!-- Texto -->
     <div
-      class="absolute inline-flex flex-col justify-center w-full h-full items-center z-20 -translate-y-0.5"
+      class="absolute inline-flex left-0 flex-col justify-center w-full h-full items-center z-20 -translate-y-0.5"
+      aria-hidden="true"
     >
       <div
         class="text-2xl font-extrabold font-bigShoulders flex justify-center items-center"
@@ -58,6 +59,7 @@
       </div>
       <div
         class="flex justify-center items-center text-blue-300 text-xs font-light leading-none -translate-y-1"
+        :aria-label="formatPercentageStringForAria(`${porcentagem}%`)"
       >
         {{ porcentagem }}%
       </div>
@@ -67,6 +69,8 @@
 
 <script setup>
 import { computed } from 'vue';
+
+const { formatPercentageStringForAria } = useAccessiblePercentage();
 
 const props = defineProps({
   feridos: { type: Number, required: true },

@@ -6,7 +6,6 @@ const base = process.env.NUXT_APP_BASE_URL || '/';
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  css: ['~/assets/css/fonts.css', '~/assets/css/global.css'],
   modules: ['nuxt-svgo', '@nuxtjs/google-fonts'],
 
   svgo: {
@@ -31,12 +30,51 @@ export default defineNuxtConfig({
   app: {
     baseURL: base,
     head: {
+      htmlAttrs: {
+        lang: 'pt-BR',
+      },
       title: 'Futuro Exterminado | Fogo Cruzado',
       meta: [
-        { name: 'description', content: 'Descrição do projeto.' },
-        { property: 'og:image', content: '/assets/images/share-img.png' },
+        {
+          name: 'description',
+          content:
+            'Uma plataforma que mapeia dados e preserva histórias que não podem ser esquecidas.',
+        },
+
+        { property: 'og:title', content: 'Futuro Exterminado | Fogo Cruzado' },
+        {
+          property: 'og:description',
+          content:
+            'Uma plataforma que mapeia dados e preserva histórias que não podem ser esquecidas.',
+        },
+        {
+          property: 'og:image',
+          content: 'https://futuroexterminado.com.br/share-img.png',
+        },
+        { property: 'og:url', content: 'https://futuroexterminado.com.br/' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:site_name', content: 'Fogo Cruzado' },
+        { property: 'og:locale', content: 'pt_BR' },
+
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'Futuro Exterminado | Fogo Cruzado' },
+        {
+          name: 'twitter:description',
+          content:
+            'Uma plataforma que mapeia dados e preserva histórias que não podem ser esquecidas.',
+        },
+        {
+          name: 'twitter:image',
+          content: 'https://futuroexterminado.com.br/share-img.png',
+        },
+        { name: 'twitter:site', content: '@fogocruzado' },
+
+        { name: 'referrer', content: 'strict-origin-when-cross-origin' },
       ],
-      link: [{ rel: 'icon', href: '/favicon.ico' }],
+      link: [
+        { rel: 'icon', href: '/favicon.ico' },
+        { rel: 'canonical', href: 'https://futuroexterminado.com.br/' },
+      ],
     },
   },
 
@@ -45,28 +83,18 @@ export default defineNuxtConfig({
   nitro: {
     compatibilityDate: '2025-06-27',
     devProxy: {},
+    output: {
+      publicDir: 'build',
+    },
     prerender: {
-      routes: [
-        base,
-        `${base}404.html`, 
-      ],
+      routes: [base, `${base}404.html`],
       failOnError: true,
     },
   },
 
   runtimeConfig: {
-    FC_EMAIL: process.env.FC_EMAIL,
-    FC_PASSWORD: process.env.FC_PASSWORD,
-    SMTP_HOST: process.env.SMTP_HOST,
-    SMTP_PORT: process.env.SMTP_PORT,
-    SMTP_SECURE: process.env.SMTP_SECURE,
-    SMTP_USER: process.env.SMTP_USER,
-    SMTP_PASS: process.env.SMTP_PASS,
-    FROM_EMAIL: process.env.FROM_EMAIL,
-    FROM_NAME: process.env.FROM_NAME,
-    TO_EMAIL: process.env.TO_EMAIL,
     public: {
-      MAPBOX_ACCESS_TOKEN: process.env.NUXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1IjoiZm9nb2NydXphZG8iLCJhIjoiY2xlbmNicXE1MDN3bDN5bWg3MHVkOHdlZCJ9.KLnBRniUM1mXT6boddOXRw',
+      MAPBOX_ACCESS_TOKEN: process.env.NUXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
     },
   },
 });

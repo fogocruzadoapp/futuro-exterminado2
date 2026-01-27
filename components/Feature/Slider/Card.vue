@@ -35,6 +35,7 @@
               :thumbnail="thumbnail"
               :video-url="videoUrl"
               :is-active="isActive"
+              :alt="`Vídeo de ${nome}`"
             />
           </div>
         </div>

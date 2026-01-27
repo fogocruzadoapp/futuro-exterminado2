@@ -22,7 +22,13 @@
     <!-- Evolução -->
     <section class="container flex flex-col mx-auto px-3 md:px-0">
       <FeaturePainel>
-        <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+        <UiTypography
+          variant="h6"
+          component="h3"
+          color="blue"
+          uppercase
+          class="mb-8"
+        >
           Série Histórica
         </UiTypography>
 
@@ -31,13 +37,13 @@
           <div class="flex justify-between flex-col md:flex-row w-full gap-6">
             <!-- Title -->
             <div class="max-w-[560px] flex flex-col gap-4">
-              <div class="text-3xl text-blue-900">
+              <h4 class="text-3xl text-blue-900">
                 Evolução do número de
                 <span class="text-blue-600 font-extrabold">{{
                   isCriancaEvolucao ? 'crianças' : 'crianças e adolescentes'
                 }}</span>
                 baleadas.
-              </div>
+              </h4>
               <!-- Legenda -->
               <ChartLegenda
                 label="Situação das vítimas"
@@ -61,7 +67,9 @@
             >
               <!-- Toggle -->
               <UiToggle
+                id="toggle-evolucao-crianca"
                 v-model="isCriancaEvolucao"
+                aria-label="Filtrar apenas menores de 12 anos"
               >
                 <span>Apenas menores de 12 anos</span>
               </UiToggle>
@@ -91,7 +99,13 @@
     <section>
       <div class="container flex flex-col mx-auto px-3 md:px-0 py-10">
         <FeaturePainel color="#F6F2F7">
-          <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+          <UiTypography
+            variant="h6"
+            component="h2"
+            color="blue"
+            uppercase
+            class="mb-8"
+          >
             Perfil das vítimas
           </UiTypography>
 
@@ -112,7 +126,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasPerfilFaixaEtaria.grafico.length > 0 &&
@@ -127,17 +141,30 @@
                           : anosDisponiveis[anosDisponiveis.length - 1] +
                             ' a ' +
                             anosDisponiveis[0]
-                      }}</span>,
-                      <span class="text-blue-600 font-extrabold"
+                      }}</span
+                      >,
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasPerfilFaixaEtaria.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasPerfilFaixaEtaria.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasPerfilFaixaEtaria.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
-                        }}%</span>
+                          vitimasPerfilFaixaEtaria.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
+                        }}%</span
+                      >
                       das vítimas baleadas eram
                       <span class="text-blue-600 font-extrabold lowercase"
                         >{{ vitimasPerfilFaixaEtaria.grafico[0].label }}s</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoFaixaEtaria ? 'Em ' : 'De '
                       }}<span class="text-blue-600 font-extrabold">{{
                         anoFaixaEtaria
@@ -148,7 +175,7 @@
                       }}</span>
                       baleadas, não houveram vitimas com informação de faixa
                       etária.
-                    </div>
+                    </h4>
                   </div>
                   <!-- Options -->
                   <div
@@ -156,6 +183,7 @@
                   >
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-faixa-etaria"
                       v-model="anoFaixaEtaria"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -243,7 +271,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasPerfilRaca.grafico.length > 0 &&
@@ -263,17 +291,28 @@
                         isCriancaRaca ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas com informação de raça/cor,
-                      <span class="text-blue-600 font-extrabold"
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasPerfilRaca.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasPerfilRaca.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasPerfilRaca.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
+                          vitimasPerfilRaca.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
                         }}%</span
                       >
                       eram
                       <span class="text-blue-600 font-extrabold lowercase"
                         >{{ vitimasPerfilRaca.grafico[0].label }}s</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoRaca ? 'Em ' : 'De ' }}
                       <span class="text-blue-600 font-extrabold">{{
                         anoRaca
@@ -287,7 +326,7 @@
                         isCriancaRaca ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas, não houveram vitimas com informação de raça/cor.
-                    </div>
+                    </h4>
                   </div>
                   <!-- Options -->
                   <div
@@ -299,6 +338,7 @@
                     </UiToggle>
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-raca"
                       v-model="anoRaca"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -391,7 +431,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasPerfilGenero.grafico.length > 0 &&
@@ -412,17 +452,28 @@
                         isCriancaGenero ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas com gênero identificado,
-                      <span class="text-blue-600 font-extrabold"
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasPerfilGenero.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasPerfilGenero.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasPerfilGenero.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
+                          vitimasPerfilGenero.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
                         }}%</span
                       >
                       eram
                       <span class="text-blue-600 font-extrabold lowercase"
                         >{{ vitimasPerfilGenero.grafico[0].label }}s</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoGenero ? 'Em ' : 'De '
                       }}<span class="text-blue-600 font-extrabold">{{
                         anoGenero
@@ -436,7 +487,7 @@
                         isCriancaGenero ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas, não houveram vitimas com informação de gênero.
-                    </div>
+                    </h4>
                   </div>
                   <!-- Options -->
                   <div
@@ -448,6 +499,7 @@
                     </UiToggle>
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-genero"
                       v-model="anoGenero"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -540,7 +592,13 @@
     <section>
       <div class="container flex flex-col mx-auto px-3 md:px-0 py-10">
         <FeaturePainel color="#F6F2F7">
-          <UiTypography variant="h6" color="blue" uppercase class="mb-8">
+          <UiTypography
+            variant="h6"
+            component="h2"
+            color="blue"
+            uppercase
+            class="mb-8"
+          >
             Ocorrências
           </UiTypography>
 
@@ -561,7 +619,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasOcorrenciasCausas.grafico.length > 0 &&
@@ -578,9 +636,20 @@
                             anosDisponiveis[0]
                       }}</span
                       >, dos casos registrados,
-                      <span class="text-blue-600 font-extrabold"
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasOcorrenciasCausas.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasOcorrenciasCausas.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasOcorrenciasCausas.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
+                          vitimasOcorrenciasCausas.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
                         }}%</span
                       >
                       das
@@ -592,8 +661,8 @@
                         vitimasOcorrenciasCausas.grafico[0].label
                       }}</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoCausas ? 'Em ' : 'De '
                       }}<span class="text-blue-600 font-extrabold">{{
                         anoCausas
@@ -607,7 +676,7 @@
                         isCriancaCausas ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas, não houveram vitimas com informação da causa.
-                    </div>
+                    </h4>
                     <!-- Legenda -->
                     <ChartLegenda
                       v-if="vitimasOcorrenciasCausas.grafico.length > 0"
@@ -636,6 +705,7 @@
                     </UiToggle>
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-causas"
                       v-model="anoCausas"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -688,7 +758,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasOcorrenciasCirc.grafico.length > 0 &&
@@ -705,9 +775,20 @@
                             anosDisponiveis[0]
                       }}</span
                       >, dos casos registrados,
-                      <span class="text-blue-600 font-extrabold"
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasOcorrenciasCirc.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasOcorrenciasCirc.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasOcorrenciasCirc.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
+                          vitimasOcorrenciasCirc.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
                         }}%</span
                       >
                       das
@@ -719,8 +800,8 @@
                         vitimasOcorrenciasCirc.grafico[0].label
                       }}</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoCirc ? 'Em ' : 'De '
                       }}<span class="text-blue-600 font-extrabold">{{
                         anoCirc
@@ -735,7 +816,7 @@
                       }}</span>
                       baleadas, não houveram vitimas com informação das
                       circunstâncias.
-                    </div>
+                    </h4>
                     <!-- Legenda -->
                     <ChartLegenda
                       v-if="vitimasOcorrenciasCirc.grafico.length > 0"
@@ -764,6 +845,7 @@
                     </UiToggle>
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-circ"
                       v-model="anoCirc"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -813,7 +895,7 @@
                 >
                   <!-- Title -->
                   <div class="max-w-[560px] flex flex-col gap-4">
-                    <div
+                    <h4
                       class="text-3xl text-blue-900"
                       v-if="
                         vitimasOcorrenciasLocal.grafico.length > 0 &&
@@ -830,9 +912,20 @@
                             anosDisponiveis[0]
                       }}</span
                       >, dos casos registrados,
-                      <span class="text-blue-600 font-extrabold"
+                      <span
+                        class="text-blue-600 font-extrabold"
+                        :aria-label="
+                          vitimasOcorrenciasLocal.grafico[0]?.percent
+                            ? formatPercentageForAria(
+                                vitimasOcorrenciasLocal.grafico[0].percent,
+                              )
+                            : ''
+                        "
                         >{{
-                          vitimasOcorrenciasLocal.grafico[0]?.percent.toLocaleString('pt-BR', { style: 'decimal', maximumFractionDigits: 1 })
+                          vitimasOcorrenciasLocal.grafico[0]?.percent.toLocaleString(
+                            'pt-BR',
+                            { style: 'decimal', maximumFractionDigits: 1 },
+                          )
                         }}%</span
                       >
                       das
@@ -844,8 +937,8 @@
                         vitimasOcorrenciasLocal.grafico[0].label
                       }}</span
                       >.
-                    </div>
-                    <div class="text-3xl text-blue-900" v-else>
+                    </h4>
+                    <h4 class="text-3xl text-blue-900" v-else>
                       {{ anoLocal ? 'Em ' : 'De '
                       }}<span class="text-blue-600 font-extrabold">{{
                         anoLocal
@@ -859,7 +952,7 @@
                         isCriancaLocal ? 'crianças' : 'crianças e adolescentes'
                       }}</span>
                       baleadas, não houveram vitimas com informação do local.
-                    </div>
+                    </h4>
                     <!-- Legenda -->
                     <ChartLegenda
                       v-if="vitimasOcorrenciasLocal.grafico.length > 0"
@@ -888,6 +981,7 @@
                     </UiToggle>
                     <!-- Select -->
                     <UiSelect
+                      id="select-ano-local"
                       v-model="anoLocal"
                       :options="anosDisponiveis"
                       :defaultOptionLabel="'Todos os anos'"
@@ -952,7 +1046,7 @@
   <!-- Casos por tipo de ocorrência e perfil da vítima -->
   <section class="bg-base-200" id="serie-historica">
     <div class="container flex flex-col mx-auto px-3 md:px-0 py-10 md:py-20">
-      <UiTypography variant="h2" uppercase>
+      <UiTypography variant="h2" component="h2" uppercase>
         Casos por tipo de ocorrência e perfil da vítima
       </UiTypography>
       <ChartLegenda
@@ -1022,7 +1116,7 @@
       class="container flex flex-col mx-auto px-3 md:px-0 text-center justify-center items-center text-white md:gap-24 pb-24 pt-8"
     >
       <div class="w-full">
-        <UiTypography variant="h2" uppercase>
+        <UiTypography variant="h2" component="h2" uppercase>
           Explore o mapa para conhecer as vítimas
         </UiTypography>
         <div class="flex justify-center items-center">
@@ -1032,7 +1126,12 @@
         </div>
       </div>
       <div class="w-full flex flex-col gap-8">
-        <UiTypography variant="h4" class="font-bigShouldersRegular" uppercase>
+        <UiTypography
+          variant="h4"
+          component="h3"
+          class="font-bigShouldersRegular"
+          uppercase
+        >
           ou acesse os detalhes de outras regiões
         </UiTypography>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
@@ -1048,7 +1147,12 @@
                   />
                 </figure>
                 <div class="flex flex-col">
-                  <UiTypography variant="h2" class="mb-0" uppercase>
+                  <UiTypography
+                    variant="h2"
+                    component="h3"
+                    class="mb-0"
+                    uppercase
+                  >
                     {{ mapaCapitais[slugify(estado)] }}
                   </UiTypography>
                   <div class="font-bigShouldersRegular text-3xl uppercase">
@@ -1081,7 +1185,12 @@
     <div
       class="container flex flex-col md:flex-row mx-auto px-3 md:px-0 md:py-16 py-10 justify-center md:justify-between items-center md:items-start text-center md:text-left gap-6"
     >
-      <UiTypography variant="h4" class="text-blue-1000" uppercase>
+      <UiTypography
+        variant="h4"
+        component="h2"
+        class="text-blue-1000"
+        uppercase
+      >
         Não encontrou o que procurava ou quer acessar mais dados?
       </UiTypography>
       <div>
@@ -1096,10 +1205,13 @@
   <LayoutBottomBar>
     <div class="flex flex-row gap-4 items-center justify-center">
       <UiSelect
+        id="select-estado-detalhes"
         :modelValue="estadoSelecionado"
         :options="estados"
+        label="Alterar região"
         placeholder="Selecione o estado"
         dropdownDirection="up"
+        aria-label="Alterar região"
         @update:modelValue="
           (val) => {
             const slug = slugify(val);
@@ -1110,7 +1222,11 @@
         "
       >
         <template #label>
-          <UiLink> Alterar região </UiLink>
+          <span
+            class="text-yellow-300 hover:text-yellow-300/90 cursor-pointer relative transition-colors duration-200"
+          >
+            Alterar região
+          </span>
         </template>
       </UiSelect>
 
@@ -1135,6 +1251,7 @@
 const route = useRoute();
 const router = useRouter();
 const slugify = useSlugify();
+const { formatPercentageForAria } = useAccessiblePercentage();
 
 // Data e Refs
 const vitimasRaw = inject('vitimas');
@@ -1238,36 +1355,36 @@ const anosDisponiveis = computed(() => {
 });
 
 const minDate = computed(() => {
-  let min = Infinity
+  let min = Infinity;
   for (const item of vitimas.value) {
-    const t = Date.parse(item?.date ?? '')
-    if (Number.isFinite(t) && t < min) min = t
+    const t = Date.parse(item?.date ?? '');
+    if (Number.isFinite(t) && t < min) min = t;
   }
-  if (min === Infinity) return null
+  if (min === Infinity) return null;
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
-  }).format(new Date(min))
-})
+  }).format(new Date(min));
+});
 
 const maxDate = computed(() => {
-  let max = -Infinity
+  let max = -Infinity;
   for (const item of vitimas.value) {
-    const t = Date.parse(item?.date ?? '')
-    if (Number.isFinite(t) && t > max) max = t
+    const t = Date.parse(item?.date ?? '');
+    if (Number.isFinite(t) && t > max) max = t;
   }
-  if (max === -Infinity) return null
+  if (max === -Infinity) return null;
   return new Intl.DateTimeFormat('pt-BR', {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
-  }).format(new Date(max))
-})
+  }).format(new Date(max));
+});
 
 const textoAbertura = computed(() => {
-  const c = complementar.value.find(o => slugify(o.nome) === slug.value)
-  return c.texto
+  const c = complementar.value.find((o) => slugify(o.nome) === slug.value);
+  return c.texto;
 });
 
 // Dados do gráfico de evolução
@@ -1862,5 +1979,4 @@ const vitimasEvolucao = computed(() => {
 
   return { grafico, tabela };
 });
-
 </script>

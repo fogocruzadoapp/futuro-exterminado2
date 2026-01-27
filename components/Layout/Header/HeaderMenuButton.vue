@@ -10,8 +10,13 @@
         }}&nbsp;/&nbsp;</span>
         <span class="text-white font-bigShoulders text-xl">{{ pageType==='introducao' ? 'Introdução' : pageType }}</span>
       </div>
-      <button @click="$emit('open')" class="cursor-pointer">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <button 
+        @click="$emit('open')" 
+        class="cursor-pointer"
+        aria-label="Abrir menu de navegação"
+        aria-expanded="false"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M24 18.9961V21.3965H14.9639L12.8037 20.1963V21.3965H12.3242L8.00391 18.9961V21.3965H0V18.9961H24ZM24 12.9961H3.99609V10.5957H24V12.9961ZM20.0039 4.5957V2.40039H24V4.7998H8.00391V2.40039H16.0439L20.0039 4.5957Z"
             fill="white"
@@ -24,12 +29,14 @@
       v-else
       @click="$emit('close')"
       key="close"
+      aria-label="Fechar menu de navegação"
+      aria-expanded="true"
     >
       <span class="text-white text-xl font-bigShoulders hidden md:flex"
         >Fechar</span
       >
-      <span class="">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <span class="" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             d="M12.0059 10.2275L15.0381 7.19531L16.3037 9.47559L13.7725 12.0059L21.5996 19.834L19.834 21.5996L15.7773 17.5566L12.0059 10.7539V13.7725L4.16602 21.5996L2.40039 19.834L10.2275 12.0059L2.40039 4.16602L4.16602 2.40039L12.0059 10.2275ZM21.5996 4.16602L17.0176 8.76172V5.21582L19.833 2.40039L21.5996 4.16602Z"
             fill="white"

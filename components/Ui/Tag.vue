@@ -2,12 +2,13 @@
   <div
     v-if="removable"
     class="tag"
-    @click="$emit('remove')"
-    :aria-label="`Remover ${text}`"
   >
     <span>{{ text }}</span>
-    <button>
-      <SvgoClose class="w-3 h-3" :fontControlled="false" />
+    <button
+      @click.stop="$emit('remove')"
+      :aria-label="`Remover ${text}`"
+    >
+      <SvgoClose class="w-3 h-3" :fontControlled="false" aria-hidden="true" />
     </button>
   </div>
 </template>

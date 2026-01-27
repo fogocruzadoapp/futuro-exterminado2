@@ -100,16 +100,16 @@
         <div
           class="flex flex-col items-center justify-center md:min-w-[560px] text-white gap-3"
         >
-          <div
+          <h1
             class="relative font-extrabold z-10 text-5xl md:text-7xl font-bigShoulders leading-none drop-shadow-2xl"
           >
             {{ props.name }}
-          </div>
-          <div
+          </h1>
+          <h2
             class="relative z-10 font-bold font-bigShouldersRegular md:text-5xl text-4xl drop-shadow-2xl"
           >
             {{ props.subtitle }}
-          </div>
+          </h2>
         </div>
       </div>
       <!-- Imagem -->

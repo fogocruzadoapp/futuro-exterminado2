@@ -10,6 +10,7 @@
 
       getButtonClasses(),
     ]"
+    v-bind="$attrs"
     @click="$emit('click', $event)"
   >
     <slot />

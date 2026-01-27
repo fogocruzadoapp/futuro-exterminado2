@@ -177,6 +177,8 @@ onUnmounted(() => {
     <!-- Botão de Som -->
     <button
       @click="toggleMute"
+      :aria-label="isMuted ? 'Ativar som' : 'Desativar som'"
+      :aria-pressed="isMuted"
       class="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200 p-2 -m-2 focus:outline-none cursor-pointer"
     >
       <!-- Ícone que muda entre som normal e som mutado -->
@@ -189,6 +191,7 @@ onUnmounted(() => {
             viewBox="0 0 33 33"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <!-- Barra 1 (esquerda) - forma original com animação -->
             <path
@@ -227,6 +230,7 @@ onUnmounted(() => {
           v-if="isMuted"
           :fontControlled="false"
           class="w-8 h-8 transition-all translate-y-1 duration-200 text-yellow-300"
+          aria-hidden="true"
         />
       </div>
     </button>

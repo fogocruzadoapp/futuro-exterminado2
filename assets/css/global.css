@@ -70,9 +70,19 @@
 
   p {
   }
+
+  /* Estilos de foco visível para acessibilidade */
+  *:focus-visible {
+    @apply outline-1 outline-yellow-300 outline-offset-1;
+  }
+
+  /* Remove outline padrão do navegador */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 @layer mapbox {
-  .mapboxgl-ctrl-logo{
+  .mapboxgl-ctrl-logo {
     display: none !important;
   }
   .mapboxgl-ctrl-fullscreen {
@@ -110,6 +120,18 @@
   .hide-scrollbar {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;
+  }
+  /* Classe para elementos visíveis apenas para leitores de tela */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 }
 @layer components {

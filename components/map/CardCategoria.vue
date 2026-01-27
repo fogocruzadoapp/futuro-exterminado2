@@ -1,10 +1,15 @@
 <template>
-  <div
+  <button
+    type="button"
     @click="toggleCategoria"
     :class="[
-      'self-stretch py-4 inline-flex flex-col justify-center items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out relative overflow-hidden',
+      'self-stretch py-4 inline-flex flex-col justify-center items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out relative overflow-hidden border-none bg-transparent p-0',
       isAtivo ? '' : 'hover:bg-black/20',
     ]"
+    :aria-label="`${
+      isAtivo ? 'Desativar' : 'Ativar'
+    } filtro ${titulo}. ${total} vítimas, ${formatPercentageForAria(Number(porcentagem))} do total. ${mortos} mortas, ${feridos} feridas`"
+    :aria-pressed="isAtivo"
   >
     <!-- Máscara SVG e fundo blur quando ativo -->
     <svg
@@ -38,15 +43,17 @@
     </svg>
 
     <!-- Botao Fechar -->
-    <div
+    <button
       v-if="isAtivo"
-      @click="!toggleCategoria"
-      class="absolute right-1 top-1"
+      type="button"
+      @click.stop="toggleCategoria"
+      class="absolute right-1 top-1 border-none bg-transparent p-0 cursor-pointer z-20"
+      aria-label="Desativar filtro"
     >
-      <UiIcon class="relative" size="small">
-        <SvgoClose :fontControlled="false" />
+      <UiIcon class="relative" size="small" aria-hidden="true">
+        <SvgoClose :fontControlled="false" aria-hidden="true" />
       </UiIcon>
-    </div>
+    </button>
 
     <!-- Conteúdo do card -->
     <div
@@ -58,6 +65,7 @@
           :is="icone"
           class="w-10 h-10 text-white"
           :fontControlled="false"
+          aria-hidden="true"
         />
       </div>
 
@@ -73,6 +81,7 @@
       <!-- Legenda -->
       <div
         class="self-stretch flex-1 flex flex-col justify-end items-center gap-1"
+        aria-hidden="true"
       >
         <div
           class="self-stretch flex flex-1 justify-center items-center text-center text-white text-base font-normal leading-none"
@@ -103,12 +112,13 @@
         </div>
       </div>
     </div>
-  </div>
+  </button>
 </template>
 
 <script setup>
 import { computed, inject } from 'vue';
 import ChartRing from './Chart/Ring.vue';
+const { formatPercentageForAria } = useAccessiblePercentage();
 
 const props = defineProps({
   categoria: {

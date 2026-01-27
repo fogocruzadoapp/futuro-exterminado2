@@ -24,6 +24,8 @@
               :key="crime"
               :class="['w-full', palette[j % palette.length]]"
               :style="{ height: segmentHeight(a, valor) }"
+              :aria-label="crime === 'feridas' ? `Feridas: ${valor}` : `Mortas: ${valor}`"
+              role="img"
             />
           </div>
 

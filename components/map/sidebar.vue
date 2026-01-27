@@ -36,8 +36,19 @@
     <!-- Conteúdo -->
     <div class="py-8 px-10 flex flex-col gap-4 relative z-10 w-full">
       <!--  Title with select -->
+      <h1 class="font-bigShoulders text-2xl uppercase z-40 sr-only">
+        Mapa de vítimas: {{ vitimasDoAno.length }} crianças e adolescentes foram baleados na
+        região metropolitana d{{estadoSelecionado === 'rio-de-janeiro' ? 'o' : 'e'}}
+        {{ mapaCapitais[estadoSelecionado]}}
+        {{ filtros.ano ? 'em ' : 'entre' }}
+        <span aria-label="Ano selecionado">
+          {{ filtros.ano === '' || filtros.ano === undefined
+            ? `${anosDisponiveis.at(-1)} e ${anosDisponiveis[0]}`
+            : filtros.ano }}
+        </span>
+      </h1>
       <div class="font-bigShoulders text-2xl uppercase z-40">
-        <span>
+        <span aria-hidden="true">
           {{ vitimasDoAno.length }} crianças e adolescentes foram baleados na
           região metropolitana d{{estadoSelecionado === 'rio-de-janeiro' ? 'o' : 'e'}}
           {{ mapaCapitais[estadoSelecionado]}}
@@ -45,6 +56,7 @@
         </span>
         <span class="inline-block whitespace-nowrap ml-1">
           <UiSelect
+            id="select-ano-sidebar"
             v-model="filtros.ano"
             :options="anosDisponiveis"
             :defaultOptionLabel="'Todos os períodos'"
@@ -53,20 +65,20 @@
             class="inline-block"
           >
             <template #label>
-              <div class="flex items-center">
+              <span class="flex items-center text-yellow-300" aria-hidden="true">
                 {{
                   filtros.ano === '' || filtros.ano === undefined
                     ? `${anosDisponiveis.at(-1)} e ${anosDisponiveis[0]}`
                     : filtros.ano
                 }}
-                <span class="text-yellow-300"><SvgoDropdown /></span>
-              </div>
+                <span class="text-yellow-300"><SvgoDropdown aria-hidden="true" /></span>
+              </span>
             </template>
           </UiSelect>
         </span>
       </div>
       <!-- Wrapper -->
-      <div class="md:overflow-y-auto hide-scrollbar flex flex-col gap-4">
+      <div class="md:overflow-y-auto hide-scrollbar flex flex-col gap-4" aria-live="polite" aria-atomic="true">
         <!--  Subtitle with victim count -->
         <div>
           <div class="text-sm font-light leading-none text-violet-light mb-2">
@@ -121,14 +133,16 @@
       <!-- Estados -->
       <div class="flex justify-between items-center">
         <UiSelect
+          id="select-estado-sidebar"
           v-model="estadoSelecionado"
           :options="estados"
-          label="Estado"
+          label="Alterar região"
           placeholder="Selecione o estado"
           dropdownDirection="up"
+          aria-label="Alterar região"
         >
           <template #label>
-            <UiLink> Alterar região </UiLink>
+            <span class="text-yellow-300 hover:text-yellow-300/90 cursor-pointer relative transition-colors duration-200"> Alterar região </span>
           </template>
         </UiSelect>
 

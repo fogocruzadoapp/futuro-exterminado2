@@ -69,6 +69,7 @@ const formatNumber = (value) => {
               getAlignment(index, header),
               headerClass,
             ]"
+            scope="col"
           >
             {{ header }}
           </th>

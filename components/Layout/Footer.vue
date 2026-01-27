@@ -26,6 +26,7 @@
                 <img
                   src="~/assets/images/logo-moverse.png"
                   class="w-[144.55px]"
+                  alt="Logo Mover-se na Web"
                 />
               </figure>
               <UiTypography
@@ -127,90 +128,106 @@
           class="flex flex-col md:flex-row justify-between md:items-center gap-6"
         >
           <!-- Logo Fogo Cruzado -->
-           <a href="https://fogocruzado.org.br/" target="_blank">
+          <a href="https://fogocruzado.org.br/" target="_blank">
             <figure>
               <img
                 src="~/assets/images/logo-fogo-cruzado.png"
                 class="w-[172px]"
+                alt="Logo Fogo Cruzado"
               />
             </figure>
-           </a>
+          </a>
 
           <!-- Redes Sociais  -->
           <div class="flex flex-col md:flex-row md:items-center gap-6">
             <div class="flex items-center gap-4">
               <span class="text-sm">Nossas redes</span>
-              <div class="flex gap-4">
+              <ul class="flex gap-4 list-none">
                 <!-- Facebook -->
-                <a
-                  href="https://www.facebook.com/fogocruzadobr"
-                  class="text-white hover:text-yellow-300 transition-colors"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="Facebook"
-                >
-                  <SvgoFacebook
-                    class="w-[20px] h-[20px]"
-                    :fontControlled="false"
-                  />
-                </a>
+                <li>
+                  <a
+                    href="https://www.facebook.com/fogocruzadobr"
+                    class="text-white hover:text-yellow-300 transition-colors"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Facebook"
+                  >
+                    <SvgoFacebook
+                      class="w-[20px] h-[20px]"
+                      :fontControlled="false"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
 
                 <!-- X (Twitter) -->
-                <a
-                  href="https://x.com/fogocruzado"
-                  class="text-white hover:text-yellow-300 transition-colors"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="X (Twitter)"
-                >
-                  <SvgoXsocial
-                    class="w-[20px] h-[20px]"
-                    :fontControlled="false"
-                  />
-                </a>
+                <li>
+                  <a
+                    href="https://x.com/fogocruzado"
+                    class="text-white hover:text-yellow-300 transition-colors"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="X (Twitter)"
+                  >
+                    <SvgoXsocial
+                      class="w-[20px] h-[20px]"
+                      :fontControlled="false"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
 
                 <!-- Instagram -->
-                <a
-                  href="https://www.instagram.com/fogocruzadobr"
-                  class="text-white hover:text-yellow-300 transition-colors"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="Instagram"
-                >
-                  <SvgoInstagram
-                    class="w-[20px] h-[20px]"
-                    :fontControlled="false"
-                  />
-                </a>
+                <li>
+                  <a
+                    href="https://www.instagram.com/fogocruzadobr"
+                    class="text-white hover:text-yellow-300 transition-colors"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Instagram"
+                  >
+                    <SvgoInstagram
+                      class="w-[20px] h-[20px]"
+                      :fontControlled="false"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
 
                 <!-- YouTube -->
-                <a
-                  href="https://www.youtube.com/fogocruzado"
-                  class="text-white hover:text-yellow-300 transition-colors"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="YouTube"
-                >
-                  <SvgoYoutube
-                    class="w-[20px] h-[20px]"
-                    :fontControlled="false"
-                  />
-                </a>
+                <li>
+                  <a
+                    href="https://www.youtube.com/fogocruzado"
+                    class="text-white hover:text-yellow-300 transition-colors"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="YouTube"
+                  >
+                    <SvgoYoutube
+                      class="w-[20px] h-[20px]"
+                      :fontControlled="false"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
 
                 <!-- LinkedIn -->
-                <a
-                  href="https://www.linkedin.com/company/fogo-cruzado"
-                  class="text-white hover:text-yellow-300 transition-colors"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="LinkedIn"
-                >
-                  <SvgoLinkedin
-                    class="w-[20px] h-[20px]"
-                    :fontControlled="false"
-                  />
-                </a>
-              </div>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/company/fogo-cruzado"
+                    class="text-white hover:text-yellow-300 transition-colors"
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="LinkedIn"
+                  >
+                    <SvgoLinkedin
+                      class="w-[20px] h-[20px]"
+                      :fontControlled="false"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
+              </ul>
             </div>
           </div>
 
@@ -258,6 +275,6 @@
   </footer>
 </template>
 <script setup>
-  const slugfy = useSlugify();
-  const estados = inject("estados");
-</script>   
+const slugfy = useSlugify();
+const estados = inject('estados');
+</script>

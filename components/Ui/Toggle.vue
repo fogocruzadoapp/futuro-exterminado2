@@ -6,17 +6,21 @@
       :true-value="trueValue"
       :false-value="falseValue"
       :disabled="disabled"
-      :id="id"
+      :id="toggleId"
       :name="name"
+      :aria-label="props.ariaLabel ? computedAriaLabel : undefined"
+      :aria-labelledby="props.ariaLabel ? undefined : labelId"
+      role="switch"
+      :aria-checked="modelValueProxy"
       @change="onChange"
       @focus="$emit('focus', $event)"
       @blur="$emit('blur', $event)"
       class="ui-toggle__input"
     />
-    <span class="ui-toggle__label">
+    <span class="ui-toggle__label" :id="labelId">
       <slot>{{ props.label }}</slot>
     </span>
-    <span class="ui-toggle__slider"></span>
+    <span class="ui-toggle__slider" aria-hidden="true"></span>
   </label>
 </template>
 
@@ -31,9 +35,20 @@ const props = defineProps({
   id: { type: String, default: undefined },
   name: { type: String, default: undefined },
   label: { type: String, default: '' },
+  ariaLabel: { type: String, default: undefined },
+  ariaLabelledby: { type: String, default: undefined },
 });
 
 const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur']);
+
+// Gera um ID único se não fornecido
+const toggleId = computed(() => {
+  return props.id || `toggle-${Math.random().toString(36).substr(2, 9)}`;
+});
+
+const labelId = computed(() => {
+  return `${toggleId.value}-label`;
+});
 
 const modelValueProxy = computed({
   get() {
@@ -42,6 +57,16 @@ const modelValueProxy = computed({
   set(val) {
     emit('update:modelValue', val ? props.trueValue : props.falseValue);
   },
+});
+
+// Computa o aria-label dinâmico incluindo o estado quando há ariaLabel explícito
+const computedAriaLabel = computed(() => {
+  if (props.ariaLabel) {
+    // Quando há ariaLabel, inclui o estado para melhor contexto
+    return `${props.ariaLabel}, ${modelValueProxy.value ? 'ativado' : 'desativado'}`;
+  }
+  // Se não há ariaLabel, usa aria-labelledby que aponta para o label
+  return undefined;
 });
 
 function onChange(e) {
@@ -56,15 +81,48 @@ function onChange(e) {
 
 .ui-toggle {
   @apply relative flex items-center cursor-pointer gap-2;
+  /* Garante que o label seja focável */
+  position: relative;
 }
+
 .ui-toggle--disabled {
   @apply opacity-50 cursor-not-allowed;
 }
+
 .ui-toggle__input {
-  @apply absolute opacity-0 min-w-8 min-h-5 w-8 h-5 cursor-pointer;
-  z-index: 1;
-  top: 0;
-  right: 0;
+  /* Input invisível mas focável - cobre toda a área do toggle */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  z-index: 10;
+  cursor: pointer;
+  /* Garante que seja focável e clicável */
+  pointer-events: auto;
+}
+
+.ui-toggle__input:focus-visible {
+  /* Indicação visual de foco no slider */
+  outline: none;
+}
+
+.ui-toggle__input:focus-visible ~ .ui-toggle__slider {
+  /* Indicação visual de foco no slider */
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+.ui-toggle__input:focus-visible ~ .ui-toggle__label {
+  /* Indicação visual de foco no label */
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+  padding: 2px;
 }
 .ui-toggle__slider {
   @apply min-w-8 min-h-5 w-8 h-5 relative bg-black/20 rounded-full transition-all;

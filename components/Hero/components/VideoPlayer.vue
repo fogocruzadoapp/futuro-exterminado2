@@ -113,6 +113,7 @@ onUnmounted(() => {
         :playsinline="props.playsinline"
         :class="['w-full h-full', objectFitClasses[props.objectFit]]"
         preload="auto"
+        aria-hidden="true"
       />
 
       <!-- Overlay opcional -->

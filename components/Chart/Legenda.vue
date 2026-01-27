@@ -10,8 +10,10 @@
         <span
           class="rounded-full w-3 h-3 flex items-center justify-center"
           :class="item.color"
+          :aria-label="item.label === 'mortas' ? 'Mortas' : 'Feridas'"
+          role="img"
         ></span>
-        <span class="text-xs text-base-600">{{ item.label }}</span>
+        <span class="text-xs text-base-600" :aria-label="item.label === 'mortas' ? 'Mortas' : 'Feridas'">{{ item.label }}</span>
       </div>
     </div>
   </div>

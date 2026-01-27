@@ -1,5 +1,8 @@
 <template>
   <div class="ui-input-wrapper relative w-full">
+    <label v-if="label && id" :for="id" :class="labelClass">
+      {{ label }}
+    </label>
     <input
       :type="type"
       :placeholder="placeholder"
@@ -13,6 +16,7 @@
       :minlength="minlength"
       :autofocus="autofocus"
       :value="modelValue"
+      :aria-label="label || placeholder || undefined"
       @input="$emit('update:modelValue', $event.target.value)"
       @focus="$emit('focus', $event)"
       @blur="$emit('blur', $event)"

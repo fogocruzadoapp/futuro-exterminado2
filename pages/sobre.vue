@@ -21,7 +21,7 @@
             <div class="flex flex-col md:flex-row gap-10 md:gap-8">
               <!-- Titulo -->
               <div class="md:w-4/12">
-                <UiTypography variant="h2" color="purple" uppercase>
+                <UiTypography variant="h2" component="h1" color="purple" uppercase>
                   Sobre o Futuro Exterminado 
                 </UiTypography>
               </div>
@@ -65,7 +65,7 @@
             <div class="flex flex-col md:flex-row gap-10 md:gap-8">
               <!-- Titulo -->
               <div class="md:w-4/12">
-                <UiTypography variant="h2" color="purple" uppercase>
+                <UiTypography variant="h2" component="h2" color="purple" uppercase>
                   o fogo cruzado
                 </UiTypography>
               </div>
@@ -130,7 +130,7 @@
               <!-- Conteúdo -->
               <div class="flex flex-col gap-10 text-white md:w-8/12">
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Ação ou operação policial
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -145,7 +145,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Adolescente
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -155,7 +155,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Bala perdida
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -168,7 +168,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Chacina
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -179,7 +179,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Criança
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -189,7 +189,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Tiroteio
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -198,7 +198,7 @@
                 </div>
 
                 <div>
-                  <UiTypography variant="h5" class="mb-2">
+                  <UiTypography variant="h5" component="h3" class="mb-2">
                     Tiros dentro de residência
                   </UiTypography>
                   <UiTypography variant="body3" color="inherit">
@@ -232,7 +232,7 @@
                 <!-- Coluna 1 -->
                 <div class="space-y-6">
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       FOGO CRUZADO
                     </UiTypography>
                     <div class="space-y-3">
@@ -264,7 +264,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       GESTÃO
                     </UiTypography>
                     <div class="space-y-3">
@@ -312,7 +312,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       COMUNICAÇÃO E INOVAÇÃO
                     </UiTypography>
                     <div class="space-y-3">
@@ -368,7 +368,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       DADOS E PESQUISA
                     </UiTypography>
                     <div class="space-y-3">
@@ -411,7 +411,7 @@
                 <!-- Coluna 2 -->
                 <div class="space-y-6">
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       EQUIPE BA
                     </UiTypography>
                     <div class="space-y-3">
@@ -459,7 +459,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       EQUIPE PE
                     </UiTypography>
                     <div class="space-y-3">
@@ -491,7 +491,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       EQUIPE RJ
                     </UiTypography>
                     <div class="space-y-3">
@@ -539,7 +539,7 @@
                   </div>
 
                   <div>
-                    <UiTypography variant="h5" class="mb-2">
+                    <UiTypography variant="h5" component="h3" class="mb-2">
                       EQUIPE PA
                     </UiTypography>
                     <div class="space-y-3">

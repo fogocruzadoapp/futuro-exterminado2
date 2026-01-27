@@ -57,25 +57,39 @@ const percentCalc = computed(() => animatedPercent.value);
     style="z-index: 50"
     class="loading-wrapper flex flex-col justify-center items-center min-h-screen text-white z-50 absolute top-0 left-0 w-full h-full transition-all duration-2000 delay-1000 ease-in-out"
     :class="loaded ? 'opacity-0 translate-y-[100px]' : ''"
+    :aria-hidden="loaded"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
   >
     <div class="flex flex-col justify-center items-center gap-2">
       <!-- Porcentagem -->
-      <div class="text-7xl font-extrabold font-bigShoulders">
+      <div
+        class="text-7xl font-extrabold font-bigShoulders"
+        :aria-label="`${percentCalc} por cento carregado`"
+      >
         {{ percentCalc }}%
       </div>
 
       <!-- Barra de Progresso -->
       <div
         class="w-[350px] md:w-[512px] h-6 overflow-hidden border-2 border-white"
+        role="progressbar"
+        :aria-valuenow="percentCalc"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        :aria-label="`Carregamento: ${percentCalc} por cento`"
       >
         <div
           class="h-full bg-yellow-300 transition-all duration-500 ease-linear"
           :style="{ width: `${percentCalc}%` }"
+          aria-hidden="true"
         ></div>
       </div>
 
       <!-- Texto -->
-      <div>carregando...</div>
+      <div class="sr-only">Carregando página</div>
+      <div aria-hidden="true">carregando...</div>
     </div>
   </div>
 </template>

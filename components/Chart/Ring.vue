@@ -46,7 +46,10 @@
       <div
         class="absolute inset-0 flex flex-col text-white justify-center items-center text-center"
       >
-        <div class="font-extrabold font-bigShoulders text-5xl md:text-7xl">
+        <div 
+          class="font-extrabold font-bigShoulders text-5xl md:text-7xl"
+          :aria-label="formatPercentageForAria(animatedPorcentagem)"
+        >
           {{ Math.round(animatedPorcentagem) }}%
         </div>
         <div
@@ -62,11 +65,11 @@
     <!-- Labels inferiores -->
     <div class="flex gap-8">
       <!-- Mortos -->
-      <div class="flex items-center gap-2 text-coral text-sm">
+      <div class="flex items-center gap-2 text-coral text-sm" aria-label="Mortas: {{ mortos }}">
         <span> {{ mortos }} mortos </span>
       </div>
       <!-- Feridos -->
-      <div class="flex items-center gap-2 text-violet text-sm">
+      <div class="flex items-center gap-2 text-violet text-sm" aria-label="Feridas: {{ feridos }}">
         <span> {{ feridos }} feridos </span>
       </div>
     </div>
@@ -82,6 +85,8 @@ import {
   watch,
   nextTick,
 } from 'vue';
+
+const { formatPercentageForAria } = useAccessiblePercentage();
 
 const props = defineProps({
   feridos: { type: Number, required: true },

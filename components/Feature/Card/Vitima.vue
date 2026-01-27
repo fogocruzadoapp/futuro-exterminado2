@@ -301,20 +301,21 @@ onUnmounted(() => {
         <div :style="bgStyle" class="py-8 flex-1 max-w-[288px]">
           <div class="flex flex-col gap-8">
             <div class="flex flex-col text-base-1000">
-              <div class="font-extrabold font-bigShoulders text-7xl">
+              <h2 class="font-extrabold font-bigShoulders text-7xl">
                 {{ props.nome }}
-              </div>
+              </h2>
               <div class="flex flex-row gap-2 items-center">
                 <SvgoPin
                   class="w-[24px] h-6 text-base-1000 md:translate-y-0"
                   :fontControlled="false"
+                  aria-hidden="true"
                 />
                 <span>{{ props.localizacao }}</span>
               </div>
             </div>
-            <div class="text-white">
+            <p class="text-white">
               {{ props.descricao }}
-            </div>
+            </p>
           </div>
         </div>
         <!--  Col Direita -->

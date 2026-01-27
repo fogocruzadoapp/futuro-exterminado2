@@ -30,8 +30,9 @@ watch(
         style="width: 100%; height: 100%; position: absolute; top: 0; left: 0"
         preserveAspectRatio="none"
         :class="animated ? 'animated' : ''"
+        aria-hidden="true"
       >
-        <g>
+        <g aria-hidden="true">
           <polygon
             points="242.5 493.5 305.2 635.2 578.4 509.1 545.3 457.7 242.5 493.5 242.5 493.5"
             fill="#4235BC"
@@ -359,6 +360,7 @@ watch(
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style="width: 100%; height: 100%"
+          aria-hidden="true"
         >
           <path
             d="M199.83 19.86V216.83L291.48 58.47V94.14L345.44 1H324.74H1V358L199.83 19.86Z"
@@ -378,6 +380,7 @@ watch(
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           style="width: 100%; height: 100%"
+          aria-hidden="true"
         >
           <path
             d="M279.37 601.05V325.9L176.37 501.16V397.65L1.62988 700H627V1.87012L279.37 601.05Z"
